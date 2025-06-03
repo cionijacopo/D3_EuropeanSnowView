@@ -1,0 +1,45 @@
+Resort,Country,HighestPoint,LowestPoint,DayPassPriceAdult,BeginnerSlope,IntermediateSlope,DifficultSlope,TotalSlope,Snowparks,NightSki,SurfaceLifts,ChairLifts,GondolaLifts,TotalLifts,LiftCapacity,SnowCannons
+Alta Badia,Italy,2550,1324,52,70,52,8,130,Yes,No,18,30,11,59,89327,391
+Mondolè Ski-Artesina-​Frabosa Soprana-​Prato Nevoso,Italy,807,803,33,42,51,11,105,Yes,Yes,19,14,0,33,26068,0
+Bardonecchia,Italy,2694,1312,36,54,38,8,100,Yes,No,13,9,1,23,27588,0
+Alto Sangro-Roccaraso-​Rivisondoli,Italy,2141,1309,41,37,32,20,90,No,No,11,11,4,26,36602,0
+Civetta-Alleghe-​Selva di Cadore-​Palafavera-​Zoldo,Italy,2100,1000,43,30,44,6,80,Yes,Yes,10,10,3,23,33289,100
+Three Peaks Dolomites-Helm-​Stiergarten-​Rotwand-​Kreuzbergpass,Italy,2200,1130,51,17,39,18,75,Yes,No,20,4,6,30,21535,250
+Folgaria-​Fiorentini,Italy,1850,1200,40,36,32,5,74,Yes,No,13,17,0,30,35900,280
+Passo San Pellegrino-​Falcade,Italy,2513,1190,47,20,38,8,67,Yes,No,6,9,2,17,24030,0
+Arabba,Italy,2478,1602,49,32,22,8,62,Yes,No,3,16,4,23,43973,620
+San Martino di Castrozza,Italy,2357,1404,44,16,32,12,60,Yes,Yes,7,14,3,24,29859,150
+Alpe di Siusi-Seiser Alm-,Italy,1669,1000,54,14,45,1,60,Yes,No,9,15,3,27,35624,70
+Ponte di Legno-Passo ​Tonale-​Presena Glacier-​Temù-Pontedilegno-Tonale-,Italy,3016,1121,42,10,40,9,59,Yes,Yes,7,19,4,30,49825,0
+Belvedere-​Col Rodella-​Ciampac-​Buffaure-Canazei-​Campitello-​Alba-​Pozza di Fassa,Italy,2428,1320,48,7,40,7,55,Yes,Yes,11,18,10,39,56216,0
+Riserva Bianca-Limone Piemonte,Italy,2060,1046,34,11,35,5,52,No,No,5,11,1,17,20655,0
+Gitschberg Jochtal,Italy,1354,772,46,17,25,9,51,Yes,No,14,4,6,24,23617,90
+Pila,Italy,1540,570,42,8,35,6,50,Yes,No,5,8,4,17,22154,480
+Aprica,Italy,2270,1162,38,28,14,7,50,Yes,No,10,4,2,16,13965,0
+Bormio-Cima Bianca,Italy,3012,1225,40,14,34,2,50,Yes,Yes,8,5,2,15,17630,240
+Pragelato,Italy,2700,1335,0,14,32,4,50,No,No,4,1,0,5,3660,0
+Latemar-Obereggen-​Pampeago-​Predazzo,Italy,1540,1050,47,9,32,7,48,Yes,Yes,6,13,3,22,36540,200
+Carezza Ski,Italy,2337,1200,41,21,14,3,40,Yes,No,13,5,2,20,19200,175
+Abetone-​Val di Luce,Italy,1892,1240,30,14,28,1,44,Yes,No,6,10,1,17,24056,110
+Paganella-Andalo,Italy,2125,1030,40,9,22,1,33,Yes,Yes,4,12,2,18,23996,0
+Cimone-Montecreto-​Sestola-​Le Polle,Italy,1976,900,35,15,25,10,50,Yes,No,6,13,1,20,23746,0
+Meran 2000,Italy,1609,648,39,12,25,3,40,Yes,No,3,5,2,10,9478,0
+Tarvisio-Monte Lussari,Italy,1752,754,35,9,11,5,25,Yes,Yes,5,8,2,15,17354,0
+Sulden am Ortler-Solda all'Ortles-,Italy,3250,1900,41,17,13,14,44,Yes,Yes,4,6,3,13,15418,0
+Pfelders-Moos in Passeier-,Italy,2502,1601,33,5,9,4,18,Yes,Yes,4,1,1,6,4300,35
+Lavarone,Italy,1650,1150,36,19,5,2,27,No,No,9,6,0,15,12040,70
+Jochgrimm-Passo Oclini-,Italy,2250,1850,17,4,2,1,7,No,No,0,3,5,8,3540,20
+Alpe Lusia-Moena-​Bellamonte,Italy,2340,1370,47,12,10,4,27,Yes,No,3,3,4,10,16280,0
+Livigno – Carosello/​Mottolino,Italy,2798,1816,46,30,65,20,115,Yes,Yes,25,13,6,44,50850,0
+Madonna di Campiglio-​Pinzolo-​Folgàrida-​Marilleva,Italy,2504,770,50,60,68,22,150,Yes,Yes,14,34,17,65,102340,0
+Cortina d'Ampezzo,Italy,2924,1224,52,45,55,20,120,Yes,No,8,26,6,40,48089,130
+La Thuile / La Rosière - Espace San Bernardo,Italy,2641,1176,43,55,83,22,160,Yes,No,21,18,1,40,53669,0
+Courmayeur / Chécrouit -​ Val Veny,Italy,2755,1205,46,16,21,4,41,Yes,No,4,8,6,18,24497,280
+Val Senales Glacier,Italy,3212,2011,44,8,7,11,27,Yes,No,6,6,2,14,15838,0
+Sestriere ski resort (Via Lattea),Italy,2749,1372,48,96,220,84,400,No,Yes,29,35,7,71,96433,0
+Valchiavenna – Madesimo/​Campodolcino,Italy,1550,1082,39,13,28,5,48,Yes,Yes,1,9,3,13,26060,0
+Kronplatz (Plan de Corones),Italy,2275,973,54,52,42,25,119,Yes,Yes,6,5,21,32,71205,450
+Val Gardena,Italy,2518,1236,54,52,105,18,175,Yes,No,29,41,14,84,121914,630
+Sauze d’Oulx (Via Lattea),Italy,2749,1372,48,96,220,84,400,No,Yes,29,35,7,71,96433,0
+Gressoney - La-Trinite (Monterosa Ski),Italy,3275,1212,43,23,94,15,132,Yes,No,9,9,12,30,31984,655
+Champoluc (Monterosa Ski),Italy,3275,1212,43,23,94,15,132,Yes,No,9,9,12,30,31984,655

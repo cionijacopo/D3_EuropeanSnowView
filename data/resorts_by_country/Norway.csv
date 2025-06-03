@@ -1,0 +1,11 @@
+Resort,Country,HighestPoint,LowestPoint,DayPassPriceAdult,BeginnerSlope,IntermediateSlope,DifficultSlope,TotalSlope,Snowparks,NightSki,SurfaceLifts,ChairLifts,GondolaLifts,TotalLifts,LiftCapacity,SnowCannons
+Trysil,Norway,1100,415,46,33,18,20,71,Yes,Yes,29,7,0,36,36182,418
+Oppdal,Norway,1300,585,44,40,7,9,56,No,No,1,0,0,1,0,0
+Myrkdalen,Norway,1060,450,44,13,12,4,30,Yes,Yes,2,4,3,9,10279,32
+Gålå,Norway,1148,800,43,13,5,1,19,Yes,Yes,7,1,0,8,7600,50
+Kvitfjell,Norway,1039,185,45,19,10,5,34,Yes,Yes,14,2,0,16,17952,90
+Hafjell,Norway,1030,195,45,33,7,4,44,Yes,Yes,14,3,1,18,21060,150
+Voss,Norway,960,284,43,25,4,11,40,Yes,No,7,4,0,11,11900,40
+Geilosiden Geilo,Norway,1178,800,44,18,12,4,34,Yes,Yes,18,6,0,24,14225,100
+Fonna Glacier,Norway,1460,1200,42,2,2,0,5,Yes,No,1,0,0,1,1200,0
+Hemsedal,Norway,1450,620,46,29,10,4,44,Yes,Yes,15,6,0,21,22921,325
