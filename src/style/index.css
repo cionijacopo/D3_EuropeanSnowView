@@ -2,6 +2,14 @@ body{
     background-color: beige;
 }
 
+/* Container principale che affianca mappa e grafico */
+.container {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    margin-top: 10px;
+}
+
 #header {
     position: relative;
     width: 100%;
@@ -20,4 +28,47 @@ body{
     left: 10px;
     bottom: 10px;
     font-size: 16pt;
+}
+
+#mappa .itemTitle {
+    text-align: center;
+    font-size: 18pt;
+}
+
+#mappa {
+    width: 50%;
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#mapArea {
+    width: 100%;
+    height: auto;
+}
+
+#grafico {
+    width: 50%;
+    background-color: #f5f5f5;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+
+.item {
+    flex-grow: 1;
+    margin: 0 5px;
+    border-radius: 5px;
+    background-color: #f5f5f5;
+    /*opacity: .6;*/
+    
+}
+
+.itemTitle {
+    text-align: center;
+    font-size: 18pt;
+    font-weight: bold;
+    margin-top: 2%;
+    margin-bottom: 2%;
 }

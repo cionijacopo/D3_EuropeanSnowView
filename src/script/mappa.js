@@ -21,7 +21,7 @@ class Mappa{
         this.tooltip = d3.select('body').append('div').attr('id', 'mapTooltip').style('opacity', 0).style('visibility', 'hidden');
         // SVG della mappa
         this.area = this.parent.append('svg').attr('id', 'mapArea').attr('width', mapWidth).attr('height', mapHeight).call(responsivefy);
-        this.background = this.area.append('rect').attr('class', 'background').attr('width', mapWidth).attr('height', mapHeight);
+        this.background = this.area.append('rect').attr('class', 'background').attr('width', mapWidth).attr('height', mapHeight).attr('fill', '#f5f5f5');
         // Gruppo stati
         this.states = this.area.append('g').attr('id', 'statesGroup');
         // Legenda della mappa
@@ -72,6 +72,8 @@ class Mappa{
                 if (value === 0) return '#e0e0e0';
                 return value != null ? colorScale(value) : '#e0e0e0';
             })
+            .attr('stroke', '#000000') // Colore del bordo
+            .attr('stroke-width', 0.5) // Spessore del bordo
             .attr('data-value', d => resortMap.get(d.properties.ISO2) || 0)
             .on('mouseover', (event, d) => {
                 const code = d.properties.ISO2;
