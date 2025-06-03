@@ -1,0 +1,90 @@
+Resort,Country,HighestPoint,LowestPoint,DayPassPriceAdult,BeginnerSlope,IntermediateSlope,DifficultSlope,TotalSlope,Snowparks,NightSki,SurfaceLifts,ChairLifts,GondolaLifts,TotalLifts,LiftCapacity,SnowCannons
+Alpendorf (Ski amedé),Austria,1980,740,52,30,81,4,115,Yes,No,22,16,11,49,75398,600
+Oberau (Wildschönau),Austria,1130,900,30,1,0,1,2,No,No,2,0,0,2,1932,0
+Dachstein West,Austria,1620,780,42,15,33,3,51,Yes,Yes,25,8,3,36,32938,163
+Zillertal Arena-Zell am Ziller-​Gerlos-​Königsleiten-​Hochkrimml,Austria,2500,580,52,43,89,11,143,Yes,No,22,21,13,56,89415,792
+Nassfeld-Hermagor,Austria,2002,600,46,30,69,11,110,Yes,Yes,16,9,5,30,49386,483
+Bad Kleinkirchheim-​St. Oswald,Austria,2055,1087,47,18,77,8,103,Yes,Yes,17,7,4,28,31186,800
+Graukogel-Bad Gastein,Austria,2007,1079,36,3,6,2,11,No,No,1,2,0,3,3352,0
+Kaltenbach-Hochzillertal-​Hochfügen-SKi-optimal-,Austria,2378,600,52,28,41,13,83,Yes,Yes,22,12,5,39,59933,400
+Damüls Mellau,Austria,2050,690,49,37,39,1,79,Yes,No,10,13,2,25,37160,130
+Zell am See,Austria,2000,760,50,30,28,19,77,Yes,Yes,9,10,8,27,48407,450
+Nauders am Reschenpass-Bergkastel,Austria,2850,1400,42,24,34,13,71,Yes,No,11,5,1,17,17651,92
+Grossarltal-​Dorfgastein,Austria,2033,850,50,25,43,1,70,Yes,No,7,8,5,20,29710,0
+Katschberg,Austria,2220,1066,46,10,50,10,70,Yes,Yes,9,6,2,17,26458,750
+Wildkogel-Neukirchen-​Bramberg,Austria,2150,820,44,28,25,9,62,Yes,Yes,15,4,5,24,27388,335
+Hintertux Glacier,Austria,3250,1500,52,14,35,11,60,Yes,No,10,6,6,22,38852,260
+Grossglockner Heiligenblut,Austria,2989,1301,44,20,34,1,55,No,No,8,1,4,13,12500,60
+Brandnertal-Brand-​Bürserberg,Austria,2000,904,46,22,30,3,55,Yes,Yes,6,6,3,15,18963,82
+Grosseck-​Speiereck-Mauterndorf-​St. Michael,Austria,2400,1095,41,26,17,7,50,No,Yes,6,4,2,12,14286,150
+Steinplatte-​Winklmoosalm-Waidring-​Reit im Winkl,Austria,1860,740,46,18,22,2,42,Yes,No,3,9,2,14,31940,107
+Kreischberg,Austria,2118,868,44,17,16,9,42,Yes,No,7,4,3,14,18808,110
+Fellhorn-​Kanzelwand-Oberstdorf-​Riezlern,Austria,1967,920,45,13,19,2,34,Yes,Yes,7,6,4,17,22076,110
+Großglockner Resort Kals-Matrei,Austria,2422,933,47,8,22,6,37,Yes,No,9,5,3,17,18276,0
+Gerlitzen,Austria,1000,520,45,10,27,3,41,Yes,No,10,7,1,18,22220,120
+Rauriser Hochalmbahnen-Rauris,Austria,2175,940,43,15,12,5,32,Yes,No,6,1,3,10,11927,35
+Moelltal Glacier-Mölltaler Gletscher-,Austria,2108,1222,47,5,7,4,17,Yes,No,2,5,2,9,15610,45
+Hinterstoder-Höss,Austria,2000,600,44,12,18,10,40,Yes,No,15,2,2,19,18464,267
+Pitztal Glacier-Pitztaler Gletscher-,Austria,2685,1740,48,3,16,0,20,Yes,No,3,1,3,7,10935,0
+Tauplitz-Bad Mitterndorf,Austria,896,812,41,18,18,6,42,No,No,14,4,1,19,18525,135
+Hochoetz-Oetz,Austria,1410,820,37,12,21,3,36,Yes,No,7,6,2,15,17422,89
+Rosshütte-Seefeld,Austria,2064,1230,44,10,9,1,20,Yes,Yes,8,3,2,13,12363,208
+Riesneralm-Donnersbachwald,Austria,1820,950,40,15,12,3,30,No,No,5,3,0,8,6880,137
+Berwang-​Bichlbach-​Rinnen,Austria,1743,1067,42,24,10,1,36,No,Yes,11,3,1,15,15623,130
+Glungezer-Tulfes,Austria,2304,950,30,7,15,0,23,Yes,No,6,2,0,8,7116,2
+Fanningberg,Austria,2115,1497,41,11,5,7,24,Yes,No,4,2,0,6,7162,36
+Turracher Höhe,Austria,2205,1400,45,14,24,3,42,Yes,Yes,12,5,1,18,18268,220
+Niedere-Andelsbuch-​Bezau,Austria,1715,655,31,5,4,1,10,No,No,5,2,1,8,6043,2
+Wurzeralm-Spital am Pyhrn,Austria,1870,810,41,10,10,2,22,No,No,5,2,1,8,9048,57
+Präbichl-Vordernberg,Austria,1608,1100,37,6,11,3,20,Yes,No,4,2,0,6,6624,90
+Grebenzen-St. Lambrecht,Austria,1870,1010,34,2,9,0,12,No,No,6,1,0,7,6790,25
+Kirchdorf,Austria,780,640,30,3,2,0,5,No,No,3,1,0,4,3570,6
+Lachtal,Austria,2222,1600,41,7,16,2,25,No,No,8,2,0,10,10620,53
+Ramsau am Dachstein-Rittisberg,Austria,1636,1035,36,14,10,1,25,No,No,14,1,0,15,10815,40
+Schetteregg-Egg,Austria,1325,1070,32,3,6,1,10,Yes,No,7,1,0,8,6642,6
+Gaissau-Hintersee,Austria,1567,750,35,23,10,0,34,Yes,No,6,3,0,9,10110,0
+Kellerjoch-Schwaz,Austria,857,545,29,5,2,2,10,No,No,4,2,0,6,3786,5
+Hochrindl-Sirnitz,Austria,1886,1540,32,5,11,3,20,Yes,Yes,11,1,0,12,7350,30
+Lammeralm-Langenwang,Austria,1230,980,29,2,3,2,8,No,No,2,6,3,11,2800,24
+Kitzbüheler Horn,Austria,2000,800,40,6,9,2,17,Yes,No,7,2,0,9,10110,55
+Loser-Altaussee,Austria,1770,850,40,18,12,3,33,Yes,No,3,2,3,8,11114,50
+Christlum-Achenkirch,Austria,1800,950,44,6,16,5,27,Yes,No,9,4,0,13,12843,0
+Monte Popolo-Eben im Pongau,Austria,1612,862,36,4,2,0,6,Yes,No,2,2,0,4,4550,55
+Mönichkirchen-​Mariensee,Austria,1450,870,35,5,6,2,13,Yes,No,3,3,0,6,6741,80
+Wetterstein lifts-Wettersteinbahnen-– Ehrwald,Austria,1530,1000,43,15,5,3,23,Yes,No,6,4,0,10,5425,33
+Stuhleck-Spital am Semmering,Austria,1774,777,42,18,6,0,24,Yes,Yes,7,2,0,9,14400,240
+Kitzbühel / Kirchberg (KitzSki),Austria,2000,800,55,101,61,17,179,Yes,Yes,15,28,11,54,92510,1102
+Obergurgl-Hochgurgl,Austria,3082,1793,50,35,55,20,110,Yes,Yes,13,7,8,28,38861,320
+Kaunertal Glacier (Kaunertaler Gletscher),Austria,3108,2180,43,14,4,2,21,No,No,6,2,1,9,13200,0
+Ski Juwel Alpbachtal Wildschönau,Austria,2025,830,46,25,53,13,93,Yes,Yes,32,7,8,47,52789,294
+Reither Kogel-Reith im Alpbachtal,Austria,1280,670,46,1,3,0,4,No,Yes,4,0,1,5,4070,0
+Ellmau (SkiWelt Wilder Kaiser-Brixental),Austria,1957,620,49,122,129,33,284,Yes,Yes,54,35,16,105,147250,1700
+Westendorf (SkiWelt Wilder Kaiser-Brixental),Austria,1957,620,49,122,129,33,284,Yes,Yes,54,35,16,105,147250,1700
+Söll (SkiWelt Wilder Kaiser-Brixental),Austria,1957,620,49,122,129,33,284,Yes,Yes,54,35,16,105,147250,1700
+Kitzsteinhorn - Kaprun,Austria,3029,1978,50,13,25,3,41,Yes,No,5,5,7,17,33598,105
+Schladming (4-Berge-Skischauke),Austria,2015,745,52,46,68,8,123,Yes,Yes,16,20,10,46,71842,600
+Axamer Lizum,Austria,2340,1580,38,7,21,2,30,Yes,No,3,6,1,10,13322,0
+Hochkönig-Maria Alm/​Dienten/​Mühlbach,Austria,1900,800,52,52,41,19,112,Yes,Yes,21,9,5,35,49232,520
+Galtür,Austria,2300,1600,40,6,25,12,43,Yes,Yes,9,2,2,13,15442,133
+Golm,Austria,2110,650,48,13,12,1,26,No,No,4,4,3,11,16240,123
+Ischgl,Austria,2872,1377,52,47,142,49,238,Yes,No,13,25,7,45,88215,1200
+Kuühtai,Austria,2520,1938,37,6,26,8,41,Yes,Yes,6,5,1,12,17254,80
+Mayrhofen-Penken/​Ahorn/​Rastkogel/​Eggalm,Austria,2500,630,52,40,66,30,136,Yes,No,31,17,9,57,82432,286
+Obertauern,Austria,2313,1630,46,61,35,4,100,Yes,Yes,11,18,2,31,50797,280
+Saalbach Hinterglemm Leogang Fieberbrunn (Skicircus),Austria,2096,830,53,140,112,18,270,Yes,Yes,21,22,28,71,135104,927
+Fieberbrunn - Saalbach Hinterglemm Leogang (Skicircus),Austria,2096,830,53,140,112,18,270,Yes,Yes,21,22,28,71,135104,927
+Serfaus-Fiss-Ladis,Austria,2820,1200,49,47,123,28,198,Yes,Yes,40,16,12,68,78460,1250
+Silvretta Montafon,Austria,2430,700,53,60,45,8,113,Yes,No,25,18,10,53,67472,330
+Wagrain (Ski amedé),Austria,1980,740,52,30,81,4,115,Yes,No,22,16,11,49,75398,600
+Flachau (Ski amedé),Austria,1980,740,52,30,81,4,115,Yes,No,22,16,11,49,75398,600
+St. Anton (Ski Arlberg),Austria,2811,1270,53,130,123,51,304,Yes,No,53,45,15,113,145127,747
+Lech (Ski Arlberg),Austria,2811,1270,53,130,123,51,304,Yes,No,53,45,15,113,145127,747
+Zürs (Ski Arlberg),Austria,2811,1270,53,130,123,51,304,Yes,No,53,45,15,113,145127,747
+St. Christoph (Ski Arlberg),Austria,2811,1270,53,130,123,51,304,Yes,No,53,45,15,113,145127,747
+St. Johann in Tirol,Austria,1604,659,44,16,23,3,43,No,Yes,12,4,4,20,21100,260
+Bad Gastein,Austria,2300,860,52,30,52,2,86,Yes,No,10,9,7,26,32699,800
+Gargellen,Austria,2300,1423,47,20,5,2,28,Yes,No,5,3,1,9,10650,83
+Sölden,Austria,3340,1350,53,70,44,29,144,Yes,Yes,12,16,8,36,70370,363
+Stubai Glacier,Austria,3212,1697,46,19,15,4,38,Yes,No,14,7,5,26,39784,69
+Elfer Neustift,Austria,2080,981,29,0,7,0,7,No,No,3,0,1,4,2980,0
+Zauchensee,Austria,2188,1000,52,23,16,4,44,Yes,No,9,6,4,19,25988,113

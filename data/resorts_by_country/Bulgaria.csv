@@ -1,0 +1,5 @@
+Resort,Country,HighestPoint,LowestPoint,DayPassPriceAdult,BeginnerSlope,IntermediateSlope,DifficultSlope,TotalSlope,Snowparks,NightSki,SurfaceLifts,ChairLifts,GondolaLifts,TotalLifts,LiftCapacity,SnowCannons
+Vitosha-Sofia,Bulgaria,2290,726,18,12,6,2,20,No,Yes,8,5,2,15,12450,0
+Borovets,Bulgaria,2560,1300,28,24,29,5,58,Yes,Yes,8,4,2,14,15800,160
+Pamporovo,Bulgaria,1926,1620,28,17,6,5,29,Yes,Yes,6,7,0,13,14266,130
+Bansko,Bulgaria,2560,990,30,20,24,3,48,Yes,Yes,7,8,2,17,24233,380
