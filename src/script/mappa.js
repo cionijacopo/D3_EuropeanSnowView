@@ -4,7 +4,7 @@ var mapWidth = mapContainer.node().getBoundingClientRect().width,
     legendWidth = mapWidth,
     legendHeight = 100;
 
-var geoJSONPath = '../data/europe.geojson';
+var geoJSONPath = '../data/geojson/europe.geojson';
 var csvPath = '../data/resorts.csv';
 
 class Mappa{
