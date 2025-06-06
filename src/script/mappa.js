@@ -79,6 +79,17 @@ class Mappa{
                 const code = d.properties.ISO2;
                 const value = resortMap.get(code) || 0;
                 this.setTitle(d.properties.NAME, value);
+
+                // Aggiungo il rosso al passaggio del cursore
+                // Salvo il colore originale nel nodo DOM
+                const node = d3.select(event.currentTarget);
+                if(!node.attr('original-fill')) {
+                    node.attr('original-fill', node.attr('fill'));
+                }
+
+                // Coloro
+                node.attr('fill', 'crimson');
+
                 this.tooltip
                     .style('visibility', 'visible')
                     .style('top', event.pageY - 10 + 'px')
@@ -89,6 +100,10 @@ class Mappa{
 
             })
             .on('mouseout', () => {
+                const node = d3.select(event.currentTarget);
+                // Ripristina il colore originale
+                node.attr('fill', node.attr('original-fill'));
+
                 this.tooltip.style('visibility', 'hidden');
                 this.setTitle();
             });
