@@ -84,7 +84,9 @@ class Mappa{
                     .style('top', event.pageY - 10 + 'px')
                     .style('left', event.pageX + 10 + 'px')
                     .transition().duration(200).style('opacity', 0.9);
-                this.tooltip.html(`${d.properties.NAME}: ${value} impianti`);
+                const label = value === 1 ? 'Ski Resort' : 'Ski Resorts';
+                this.tooltip.html(`${d.properties.NAME}: ${value} ${label}`);
+
             })
             .on('mouseout', () => {
                 this.tooltip.style('visibility', 'hidden');
@@ -93,7 +95,7 @@ class Mappa{
 
         // Legenda
         const legend = d3.legendColor()
-            .title('Numero di impianti')
+            .title('Number of Ski Resorts')
             .scale(colorScale)
             .labels([
                 '0',
@@ -117,7 +119,8 @@ class Mappa{
         let title = this.name;
 
         if (value !== null) {
-            title += ` — ${value} impianti`;
+            const label = value === 1 ? 'Ski Resort' : 'Ski Resorts';
+            title += ` — ${value} ${label}`;
         }
 
         this.title.html(title);
