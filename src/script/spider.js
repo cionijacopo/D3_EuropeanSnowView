@@ -5,6 +5,15 @@ const radarWidth = 400;
 const radarHeight = 400;
 const radarRadius = Math.min(radarWidth, radarHeight) / 2 - 40;
 
+// Titolo sopra il grafico
+d3.select("#grafico")
+  .append("div")
+  .attr("class", "itemTitle")
+  .style("text-align", "center")
+  .style("margin-bottom", "10px")
+  .text("Main Features (Avg)");
+
+
 // Container SVG
 const radarSvg = d3.select("#grafico")
   .append("svg")
@@ -45,6 +54,27 @@ d3.csv("../data/media_per_country.csv", d3.autoType).then(data => {
       .domain([0, d3.max(data, r => r[d])])
       .range([0, radarRadius]);
   });
+
+// Numero di livelli concentrici
+const levels = 5;
+
+// Crea un gruppo per la griglia
+const gridGroup = radarSvg.append("g").attr("class", "radarGrid");
+
+// Aggiungi i cerchi concentrici
+for (let level = 1; level <= levels; level++) {
+    const r = (radarRadius / levels) * level;
+
+gridGroup.append("circle")
+    .attr("cx", 0)
+    .attr("cy", 0)
+    .attr("r", r)
+    .style("fill", "none")
+    .style("stroke", "#ccc")
+    .style("stroke-dasharray", "2,2")
+    .style("stroke-width", 0.5);
+}
+
 
   // Disegna le assi
   const numAxes = axisLabels.length;
