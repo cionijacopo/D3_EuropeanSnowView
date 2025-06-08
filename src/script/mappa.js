@@ -98,6 +98,8 @@ class Mappa{
                 const label = value === 1 ? 'Ski Resort' : 'Ski Resorts';
                 this.tooltip.html(`${d.properties.NAME}: ${value} ${label}`);
 
+                // Aggiorno lo spiderplot 
+                updateSpider(code);
             })
             .on('mouseout', () => {
                 const node = d3.select(event.currentTarget);
@@ -106,6 +108,7 @@ class Mappa{
 
                 this.tooltip.style('visibility', 'hidden');
                 this.setTitle();
+                updateSpider(null);
             });
 
         // Legenda

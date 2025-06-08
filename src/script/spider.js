@@ -27,21 +27,22 @@ const radarSvg = d3.select("#grafico")
 let radarData = [];
 let radarScales = {};
 let axisLabels = [
-  "avg_total_slopes",
-  "avg_lifts",
-  "avg_max_elevation",
-  "avg_snow_cannons",
-  "avg_day_pass_price"
+  "Avg_Total_Slopes",
+  "Avg_Total_Lifts",
+  "Avg_Highest_Point",
+  "Avg_Snow_Cannons",
+  "Avg_Day_Pass_Price"
 ];
 
 // Etichette leggibili per i tooltip/assi
 const readableLabels = {
-  avg_total_slopes: "Piste",
-  avg_lifts: "Impianti",
-  avg_max_elevation: "Altitudine",
-  avg_snow_cannons: "Cannoni",
-  avg_day_pass_price: "Prezzo"
+  Avg_Total_Slopes: "N. Slopes",
+  Avg_Total_Lifts: "N. Lifts",
+  Avg_Highest_Point: "Highest Point",
+  Avg_Snow_Cannons: "N. Cannons",
+  Avg_Day_Pass_Price: "Day Price"
 };
+
 
 // Caricamento del CSV con i dati medi per stato
 // (assicurati che il file sia nella cartella corretta!)
@@ -96,19 +97,24 @@ gridGroup.append("circle")
       .attr("stroke-width", 1);
 
     axisGroup.append("text")
-      .attr("x", x * 1.1)
-      .attr("y", y * 1.1)
+      .attr("x", x * 1.15)
+      .attr("y", y * 1.15)
       .attr("dy", "0.35em")
       .style("font-size", "12px")
       .style("text-anchor", "middle")
       .text(readableLabels[label]);
   });
 
-  // Disegna inizialmente un grafico vuoto
-  updateSpider("FR"); // codice a due lettere ISO (es. "FR" Francia)
+  
 });
 
 function updateSpider(countryCode) {
+  // Se non c'è stato selezionato → rimuove il grafico
+  if (!countryCode) {
+    radarSvg.selectAll(".radarArea").remove();
+    return;
+  }
+
   const entry = radarData.find(d => d.country_code === countryCode);
   if (!entry) return;
 
@@ -128,10 +134,10 @@ function updateSpider(countryCode) {
   // Chiudi il poligono
   points.push(points[0]);
 
-  // Rimuovi eventuale vecchio radar
+  // Rimuove precedente radar
   radarSvg.selectAll(".radarArea").remove();
 
-  // Disegna nuovo
+  // Aggiunge nuovo radar
   radarSvg.append("path")
     .datum(points)
     .attr("class", "radarArea")
@@ -141,3 +147,4 @@ function updateSpider(countryCode) {
     .attr("stroke-width", 2)
     .attr("d", d3.line()(points));
 }
+
