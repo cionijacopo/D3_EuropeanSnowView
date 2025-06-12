@@ -8,6 +8,7 @@ body{
     flex-direction: row;
     width: 100%;
     margin-top: 10px;
+    margin-bottom: 10px;
 }
 
 #header {
@@ -22,12 +23,45 @@ body{
     text-align: center;
 }
 
+#footer {
+    width: 100%;
+    background: darkslategray;
+    opacity: 0.9;
+    color: white;
+    border-radius: 5px;  
+    margin: 0;
+    padding: 0;
+}
+
+
 #titolo{
     position: relative;
     top: 12px;
     left: 10px;
     bottom: 10px;
     font-size: 16pt;
+}
+
+#ending {
+    display: flex;                    
+    justify-content: space-between;  
+    align-items: center;             
+    padding: 20px;                   
+    font-size: 14pt;
+}
+
+#ending img {
+    max-width: 250px;
+    height: auto;
+    margin-left: 40px;
+}
+
+li { 
+    margin: 5px;
+}
+
+#rights {
+    text-align: center;
 }
 
 #mappa .itemTitle {

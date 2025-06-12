@@ -11,21 +11,21 @@ d3.select("#grafico")
     .attr("class", "itemTitle")
     .style("text-align", "center")
     .style("margin-bottom", "10px")
-    .text("Main Features (Avg)");
+    .text("Main Avg Features");
 
-// Checkbox per abilitare/disabilitare i tooltip
-const checkboxContainer = d3.select("#grafico")
+// Toggle switch personalizzato
+const toggleContainer = d3.select("#grafico")
     .append("div")
-    .style("text-align", "center")
-    .style("margin-bottom", "10px");
+    .attr("class", "toggle-container");
 
-checkboxContainer.append("input")
-    .attr("type", "checkbox")
-    .attr("id", "showTooltip");
+toggleContainer.html(`
+    <label class="switch">
+        <input type="checkbox" id="showTooltip">
+        <span class="slider"></span>
+    </label>
+    <span class="toggle-label">Show non-normalized values</span>
+`);
 
-checkboxContainer.append("label")
-    .attr("for", "showTooltip")
-    .text(" Mostra valori dettagliati");
 
 // Container SVG
 const radarSvg = d3.select("#grafico")
@@ -85,13 +85,32 @@ d3.csv("../data/media_per_country.csv", d3.autoType).then(data => {
             .style("stroke-dasharray", "2,2")
             .style("stroke-width", 0.5);
 
-        gridGroup.append("text")
-            .attr("x", 5)
-            .attr("y", -r)
-            .attr("dy", "-0.3em")
-            .attr("font-size", "10px")
-            .style("fill", "#666")
-            .text((r / radarRadius).toFixed(1));
+        // Posiziona la scala normalizzata sull’asse in basso a destra (primo asse) - metto indice 2
+        const labelAngle = (Math.PI * 2 / axisLabels.length) * 2 - Math.PI / 2;  // indice 2 → terzo asse
+
+        for (let level = 1; level <= levels; level++) {
+            const r = (radarRadius / levels) * level;
+
+            gridGroup.append("circle")
+                .attr("cx", 0)
+                .attr("cy", 0)
+                .attr("r", r)
+                .style("fill", "none")
+                .style("stroke", "#ccc")
+                .style("stroke-dasharray", "2,2")
+                .style("stroke-width", 0.5);
+
+            const labelX = r * Math.cos(labelAngle);
+            const labelY = r * Math.sin(labelAngle);
+
+            gridGroup.append("text")
+                .attr("x", labelX + 5)
+                .attr("y", labelY + 4)
+                .attr("font-size", "10px")
+                .style("fill", "#666")
+                .text((r / radarRadius).toFixed(1));
+        }
+
     }
 
     const numAxes = axisLabels.length;
@@ -113,7 +132,7 @@ d3.csv("../data/media_per_country.csv", d3.autoType).then(data => {
 
         axisGroup.append("text")
             .attr("x", x * 1.15)
-            .attr("y", y * 1.15)
+            .attr("y", y * 1.17)
             .attr("dy", "0.35em")
             .style("font-size", "12px")
             .style("text-anchor", "middle")
@@ -143,13 +162,13 @@ function updateSpider(countryCode) {
 
                 axisLabels.forEach((key, i) => {
                     const angle = angleSlice * i - Math.PI / 2;
-                    const x = radarRadius * Math.cos(angle) * 1.15;
-                    const y = radarRadius * Math.sin(angle) * 1.15;
+                    const x = radarRadius * Math.cos(angle) * 1.18;
+                    const y = radarRadius * Math.sin(angle) * 1.18;
 
                     radarSvg.append("text")
                         .attr("class", "axisValue")
                         .attr("x", x)
-                        .attr("y", y + 15)
+                        .attr("y", y + 18)
                         .attr("text-anchor", "middle")
                         .attr("font-size", "11px")
                         .style("fill", "#333")
@@ -222,15 +241,15 @@ function updateSpider(countryCode) {
     if(showRadarTooltip && entry) {
         axisLabels.forEach((key, i) => {
         const angle = angleSlice * i - Math.PI / 2;
-        const x = radarRadius * Math.cos(angle) * 1.15;
-        const y = radarRadius * Math.sin(angle) * 1.15;
+        const x = radarRadius * Math.cos(angle) * 1.18;
+        const y = radarRadius * Math.sin(angle) * 1.18;
 
         const value = entry ? entry[key] : 0;
 
         radarSvg.append("text")
             .attr("class", "axisValue")
             .attr("x", x)
-            .attr("y", y + 15)
+            .attr("y", y + 18)
             .attr("text-anchor", "middle")
             .attr("font-size", "11px")
             .style("fill", "#333")
