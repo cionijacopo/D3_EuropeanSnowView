@@ -15,7 +15,12 @@ class Mappa{
         this.projection = d3.geoNaturalEarth1();
         this.path = d3.geoPath().projection(this.projection);
         // Titolo 
-        this.title = this.parent.append('div').attr('class', 'itemTitle').attr('id', 'mapTitle');
+        // this.title = this.parent.append('div').attr('class', 'itemTitle').attr('id', 'mapTitle');
+        if (this.parent.select('#mapTitle').empty()) {
+            this.title = this.parent.append('div')
+                .attr('class', 'itemTitle')
+                .attr('id', 'mapTitle');
+        }
         this.setTitle(null);
         // Tolltip
         this.tooltip = d3.select('body').append('div').attr('id', 'mapTooltip').style('opacity', 0).style('visibility', 'hidden');
@@ -90,6 +95,7 @@ class Mappa{
                 // Coloro
                 node.attr('fill', 'crimson');
 
+                /*
                 this.tooltip
                     .style('visibility', 'visible')
                     .style('top', event.pageY - 10 + 'px')
@@ -97,7 +103,7 @@ class Mappa{
                     .transition().duration(200).style('opacity', 0.9);
                 const label = value === 1 ? 'Ski Resort' : 'Ski Resorts';
                 this.tooltip.html(`${d.properties.NAME}: ${value} ${label}`);
-
+                */
                 // Aggiorno lo spiderplot 
                 updateSpider(code);
             })
@@ -106,7 +112,7 @@ class Mappa{
                 // Ripristina il colore originale
                 node.attr('fill', node.attr('original-fill'));
 
-                this.tooltip.style('visibility', 'hidden');
+                //this.tooltip.style('visibility', 'hidden').style('opacity', 0).html("");
                 this.setTitle();
                 updateSpider(null);
             });
@@ -132,6 +138,7 @@ class Mappa{
 
     }
 
+    /*
     setTitle(name, value = null) {
         this.name = name || 'Europa';
         let title = this.name;
@@ -143,6 +150,21 @@ class Mappa{
 
         this.title.html(title);
     }
+        */
+
+    setTitle(name, value = null) {
+        const element = d3.select("#mapTitle");
+
+        if (!element.empty()) {
+            if (name && typeof value === 'number') {
+                const label = value === 1 ? 'Ski Resort' : 'Ski Resorts';
+                element.html(`${name} — ${value} ${label}`);
+            } else {
+                element.html("Europe");
+            }
+        }
+    }
+
 
 }
 
