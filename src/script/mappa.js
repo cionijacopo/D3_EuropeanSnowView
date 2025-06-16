@@ -7,29 +7,49 @@ var mapWidth = mapContainer.node().getBoundingClientRect().width,
 var geoJSONPath = '../data/geojson/europe.geojson';
 var csvPath = '../data/resorts.csv';
 
-class Mappa{
+class Mappa {
     constructor(container) {
         this.parent = container;
         this.name = 'Europe';
         this.currentState = null;
         this.projection = d3.geoNaturalEarth1();
         this.path = d3.geoPath().projection(this.projection);
-        // Titolo 
-        // this.title = this.parent.append('div').attr('class', 'itemTitle').attr('id', 'mapTitle');
+
         if (this.parent.select('#mapTitle').empty()) {
             this.title = this.parent.append('div')
                 .attr('class', 'itemTitle')
                 .attr('id', 'mapTitle');
         }
         this.setTitle(null);
-        // Tolltip
-        this.tooltip = d3.select('body').append('div').attr('id', 'mapTooltip').style('opacity', 0).style('visibility', 'hidden');
-        // SVG della mappa
-        this.area = this.parent.append('svg').attr('id', 'mapArea').attr('width', mapWidth).attr('height', mapHeight).call(responsivefy);
-        this.background = this.area.append('rect').attr('class', 'background').attr('width', mapWidth).attr('height', mapHeight).attr('fill', '#f5f5f5');
-        // Gruppo stati
-        this.states = this.area.append('g').attr('id', 'statesGroup');
-        // Legenda della mappa
+
+        this.tooltip = d3.select('body').append('div')
+            .attr('id', 'resortTooltip')
+            .style('position', 'absolute')
+            .style('background', 'white')
+            .style('padding', '5px 10px')
+            .style('border', '1px solid #ccc')
+            .style('border-radius', '5px')
+            .style('pointer-events', 'none')
+            .style('font-size', '12px')
+            .style('visibility', 'hidden');
+
+        this.area = this.parent.append('svg')
+            .attr('id', 'mapArea')
+            .attr('width', mapWidth)
+            .attr('height', mapHeight)
+            .call(responsivefy);
+
+        this.zoomGroup = this.area.append('g').attr('id', 'zoomGroup');
+
+        this.background = this.zoomGroup.append('rect')
+            .attr('class', 'background')
+            .attr('width', mapWidth)
+            .attr('height', mapHeight)
+            .attr('fill', '#f5f5f5');
+
+        this.states = this.zoomGroup.append('g').attr('id', 'statesGroup');
+        this.resortPoints = this.zoomGroup.append('g').attr('id', 'resortPoints');
+
         this.legend = this.parent.append('div')
             .attr('id', 'mapLegend')
             .append('svg')
@@ -39,31 +59,26 @@ class Mappa{
             .append('g')
             .attr('id', 'legendGroup')
             .attr('transform', 'translate(30,30)');
-        // Carica i dati (GeoJSON + CSV)
+
         Promise.all([
             d3.json(geoJSONPath),
             d3.csv(csvPath)
         ]).then(([geojson, csvData]) => {
             console.log('Dati caricati correttamente.');
+            this.geojson = geojson;
             this.build(geojson, csvData);
         });
     }
 
     build(geojson, csvData) {
-        // Mappa da codice paese a numero di impianti
         const resortMap = new Map(csvData.map(d => [d.country_code, +d.resorts_count]));
 
-        const max = d3.max(csvData, d => +d.resorts_count);
-        // Scala di blu per gli impianti, nel caso di 0 impianti si vede il grigio
         const colorScale = d3.scaleThreshold()
             .domain([1, 10, 20, 40, 60, 80])
             .range(['#e0e0e0', '#cce5ff', '#99ccff', '#66b2ff', '#3399ff', '#0073e6', '#004080']);
 
-
-        // Adatta la proiezione ai dati
         this.projection.fitExtent([[0, 0], [mapWidth, mapHeight]], geojson);
 
-        // Disegna i paesi
         this.states.selectAll('path')
             .data(geojson.features)
             .enter()
@@ -73,99 +88,162 @@ class Mappa{
             .attr('fill', d => {
                 const code = d.properties.ISO2;
                 const value = resortMap.get(code);
-                // console.log(d.properties);
-                if (value === 0) return '#e0e0e0';
-                return value != null ? colorScale(value) : '#e0e0e0';
+                return value != null && value > 0 ? colorScale(value) : '#e0e0e0';
             })
-            .attr('stroke', '#000000') // Colore del bordo
-            .attr('stroke-width', 0.5) // Spessore del bordo
-            .attr('data-value', d => resortMap.get(d.properties.ISO2) || 0)
+            .attr('stroke', '#000000')
+            .attr('stroke-width', 0.5)
             .on('mouseover', (event, d) => {
+                // Evita tutto se siamo in zoom su uno stato
+                const currentZoom = this.zoomGroup.attr('data-zoom');
+                if (currentZoom !== null) return;
+
                 const code = d.properties.ISO2;
                 const value = resortMap.get(code) || 0;
+
                 this.setTitle(d.properties.NAME, value);
 
-                // Aggiungo il rosso al passaggio del cursore
-                // Salvo il colore originale nel nodo DOM
                 const node = d3.select(event.currentTarget);
-                if(!node.attr('original-fill')) {
+                if (!node.attr('original-fill')) {
                     node.attr('original-fill', node.attr('fill'));
                 }
-
-                // Coloro
                 node.attr('fill', 'crimson');
 
-                /*
-                this.tooltip
-                    .style('visibility', 'visible')
-                    .style('top', event.pageY - 10 + 'px')
-                    .style('left', event.pageX + 10 + 'px')
-                    .transition().duration(200).style('opacity', 0.9);
-                const label = value === 1 ? 'Ski Resort' : 'Ski Resorts';
-                this.tooltip.html(`${d.properties.NAME}: ${value} ${label}`);
-                */
-                // Aggiorno lo spiderplot 
                 updateSpider(code);
             })
-            .on('mouseout', () => {
+            .on('mouseout', (event, d) => {
                 const node = d3.select(event.currentTarget);
-                // Ripristina il colore originale
-                node.attr('fill', node.attr('original-fill'));
+                
+                // Ripristina colore solo se originale-fill è definito
+                const original = node.attr('original-fill');
+                if (original) {
+                    node.attr('fill', original);
+                }
 
-                //this.tooltip.style('visibility', 'hidden').style('opacity', 0).html("");
-                this.setTitle();
+                const isZoomed = this.zoomGroup.attr('data-zoom') !== null;
+                if (!isZoomed) {
+                    this.setTitle();
+                }
+
                 updateSpider(null);
+            })
+            .on('click', (event, d) => {
+                const code = d.properties.ISO2;
+                const value = resortMap.get(code) || 0;
+                if(value > 0) {
+                    this.handleZoom(d, value);
+                }
             });
-
-        // Legenda
+                
         const legend = d3.legendColor()
             .title('Number of Ski Resorts')
             .scale(colorScale)
-            .labels([
-                '0',
-                '1–9',
-                '10–19',
-                '20–39',
-                '40–59',
-                '60–79',
-                '≥ 80'
-            ])
+            .labels(['0', '1–9', '10–19', '20–39', '40–59', '60–79', '≥ 80'])
             .shapeWidth(50)
             .shapePadding(5)
             .orient('horizontal');
 
         d3.select('#legendGroup').call(legend);
-
     }
 
-    /*
-    setTitle(name, value = null) {
-        this.name = name || 'Europa';
-        let title = this.name;
+    handleZoom(feature, value) {
+        const code = feature.properties.ISO2;
+        const isZoomed = this.zoomGroup.attr('data-zoom') === code;
 
-        if (value !== null) {
-            const label = value === 1 ? 'Ski Resort' : 'Ski Resorts';
-            title += ` — ${value} ${label}`;
+        if (isZoomed) {
+            // Torna alla vista Europa
+            this.zoomGroup.transition().duration(750)
+                .attr('transform', `translate(0,0) scale(1)`)
+                .attr('data-zoom', null);
+
+            this.setTitle(null);
+            this.resortPoints.selectAll("circle").remove();
+
+            // Riattiva contenuti
+            d3.select("#grafico")
+                .style("visibility", "visible")
+                .style("pointer-events", "auto");
+
+            d3.select("#footer")
+                .style("visibility", "visible")
+                .style("pointer-events", "auto");
+
+        } else {
+            // Zoom su paese
+            const bounds = this.path.bounds(feature);
+            const dx = bounds[1][0] - bounds[0][0];
+            const dy = bounds[1][1] - bounds[0][1];
+            const x = (bounds[0][0] + bounds[1][0]) / 2;
+            const y = (bounds[0][1] + bounds[1][1]) / 2;
+            const scale = Math.min(4, 0.9 / Math.max(dx / mapWidth, dy / mapHeight));
+            const translate = [mapWidth / 2 - scale * x, mapHeight / 2 - scale * y];
+
+            this.zoomGroup.transition().duration(750)
+                .attr("transform", `translate(${translate}) scale(${scale})`)
+                .attr('data-zoom', code);
+
+            const label = value === 1 ? "Ski Resort" : "Ski Resorts";
+            this.setTitle(`${feature.properties.NAME} — ${value} ${label}`);
+            this.loadResorts(code);
+
+            // Disattiva contenuti mantenendo layout
+            d3.select("#grafico")
+                .style("visibility", "hidden")
+                .style("pointer-events", "none");
+
+            d3.select("#footer")
+                .style("visibility", "hidden")
+                .style("pointer-events", "none");
         }
-
-        this.title.html(title);
     }
-        */
+
+
+    loadResorts(code) {
+        const file = `../data/resorts_by_country/coordinates/${code}_with_coordinates.csv`;
+
+        d3.csv(file).then(data => {
+            const valid = data.filter(d => d.latitude && d.longitude);
+
+            this.resortPoints.selectAll("circle")
+                .data(valid)
+                .enter()
+                .append("circle")
+                .attr("cx", d => this.projection([+d.longitude, +d.latitude])[0])
+                .attr("cy", d => this.projection([+d.longitude, +d.latitude])[1])
+                .attr("r", 3)
+                .attr("fill", "crimson")
+                .attr("stroke", "#fff")
+                .attr("stroke-width", 0.5)
+                .on("mouseover", (event, d) => {
+                    this.tooltip
+                        .style("visibility", "visible")
+                        .text(d.Resort)
+                        .style("top", (event.pageY - 10) + "px")
+                        .style("left", (event.pageX + 10) + "px");
+                })
+                .on("mousemove", event => {
+                    this.tooltip
+                        .style("top", (event.pageY - 10) + "px")
+                        .style("left", (event.pageX + 10) + "px");
+                })
+                .on("mouseout", () => {
+                    this.tooltip.style("visibility", "hidden");
+                });
+        });
+    }
 
     setTitle(name, value = null) {
         const element = d3.select("#mapTitle");
-
         if (!element.empty()) {
             if (name && typeof value === 'number') {
                 const label = value === 1 ? 'Ski Resort' : 'Ski Resorts';
                 element.html(`${name} — ${value} ${label}`);
+            } else if (name) {
+                element.html(name);
             } else {
                 element.html("Europe");
             }
         }
     }
-
-
 }
 
 function responsivefy(svg) {
@@ -175,7 +253,7 @@ function responsivefy(svg) {
         aspect = width / height;
 
     svg.attr("viewBox", `0 0 ${width} ${height}`)
-        .attr("preserveAspectRatio", "xMinYMid")
+        .attr("preserveAspectRatio", "xMidYMid")
         .call(resize);
 
     d3.select(window).on("resize." + container.attr("id"), resize);
@@ -187,6 +265,4 @@ function responsivefy(svg) {
     }
 }
 
-
-// Crea la mappa all’avvio
 new Mappa(mapContainer);

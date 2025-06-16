@@ -1,5 +1,5 @@
 body{
-    background-color: beige;
+    background-color: #f5f5f5;
 }
 
 /* Container principale che affianca mappa e grafico */
@@ -106,3 +106,4 @@ li {
     margin-top: 2%;
     margin-bottom: 2%;
 }
+
