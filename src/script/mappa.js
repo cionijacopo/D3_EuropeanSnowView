@@ -158,7 +158,7 @@ class Mappa {
             this.setTitle(null);
             this.resortPoints.selectAll("circle").remove();
 
-            // Riattiva contenuti
+            // Riattiva contenuti standard
             d3.select("#grafico")
                 .style("visibility", "visible")
                 .style("pointer-events", "auto");
@@ -166,6 +166,13 @@ class Mappa {
             d3.select("#footer")
                 .style("visibility", "visible")
                 .style("pointer-events", "auto");
+
+            // Nasconde il grafico altitudine
+            hideAltitudeChart();
+
+            // Mostra di nuovo lo spider plot
+            d3.select("#spiderContainer")
+                .style("display", "block");
 
         } else {
             // Zoom su paese
@@ -183,17 +190,27 @@ class Mappa {
 
             const label = value === 1 ? "Ski Resort" : "Ski Resorts";
             this.setTitle(`${feature.properties.NAME} — ${value} ${label}`);
-            this.resortPoints.selectAll("*").remove();  // reset visualizzazione precedente
-            this.loadResorts(code);
 
-            // Disattiva contenuti mantenendo layout
-            d3.select("#grafico")
-                .style("visibility", "hidden")
-                .style("pointer-events", "none");
+            this.resortPoints.selectAll("*").remove();
+            this.loadResorts(code);
+            // Nasconde spiderplot
+            d3.select("#spiderContainer")
+                .style("display", "none");
+
+            // Mostra il grafico altitudine
+            d3.select("#altitudeContainer")
+                .style("display", "flex");
+
+            // Disegna il nuovo grafico
+            drawAltitudeChart(code);
 
             d3.select("#footer")
                 .style("visibility", "hidden")
                 .style("pointer-events", "none");
+
+            // Mostra il grafico di altitudine
+           // d3.select("#altitudeChartContainer")
+           //     .style("display", "flex");
         }
     }
 

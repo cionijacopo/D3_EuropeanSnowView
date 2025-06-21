@@ -5,16 +5,23 @@ const radarWidth = 400;
 const radarHeight = 400;
 const radarRadius = Math.min(radarWidth, radarHeight) / 2 - 40;
 
-// Titolo sopra il grafico
-d3.select("#grafico")
+const radarContainer = d3.select("#grafico")
     .append("div")
+    .attr("id", "spiderContainer")
+    .style("display", "block")
+    .style("flex-direction", "column")
+    .style("align-items", "center");
+
+// Titolo sopra il grafico
+radarContainer.append("div")
     .attr("class", "itemTitle")
     .style("text-align", "center")
     .style("margin-bottom", "10px")
     .text("Main Avg Features");
 
+
 // Toggle switch personalizzato
-const toggleContainer = d3.select("#grafico")
+const toggleContainer = radarContainer
     .append("div")
     .attr("class", "toggle-container");
 
@@ -28,7 +35,7 @@ toggleContainer.html(`
 
 
 // Container SVG
-const radarSvg = d3.select("#grafico")
+const radarSvg = radarContainer
     .append("svg")
     .attr("id", "spiderArea")
     .attr("width", radarWidth)
@@ -148,6 +155,9 @@ d3.select("#showTooltip").on("change", function () {
 });
 
 function updateSpider(countryCode) {
+
+    if (radarContainer.style("visibility") === "hidden") return;
+
     currentCountryCode = countryCode;
 
     radarSvg.selectAll(".radarArea").remove();
