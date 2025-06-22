@@ -181,7 +181,7 @@ class Mappa {
             const dy = bounds[1][1] - bounds[0][1];
             const x = (bounds[0][0] + bounds[1][0]) / 2;
             const y = (bounds[0][1] + bounds[1][1]) / 2;
-            const scale = Math.min(4, 0.9 / Math.max(dx / mapWidth, dy / mapHeight));
+            const scale = Math.min(6, 0.9 / Math.max(dx / mapWidth, dy / mapHeight));
             const translate = [mapWidth / 2 - scale * x, mapHeight / 2 - scale * y];
 
             this.zoomGroup.transition().duration(750)
@@ -235,10 +235,11 @@ class Mappa {
             .append("circle")
             .attr("cx", d => this.projection([+d.longitude, +d.latitude])[0])
             .attr("cy", d => this.projection([+d.longitude, +d.latitude])[1])
-            .attr("r", 3)
+            .attr("r", 2)
             .attr("fill", "crimson")
             .attr("stroke", "#fff")
             .attr("stroke-width", 0.5)
+            .attr("class", d => `resort-circle resort-${sanitizeID(d.Resort)}`)
             .on("mouseover", (event, d) => {
                 this.tooltip
                     .style("visibility", "visible")
@@ -291,5 +292,26 @@ function responsivefy(svg) {
         svg.attr("height", Math.round(targetWidth / aspect));
     }
 }
+
+function sanitizeID(str) {
+    return String(str)
+        .toLowerCase()
+        .replace(/\s+/g, "-")        // spazi → trattini
+        .replace(/[^a-z0-9\-]/g, ""); // rimuove caratteri speciali
+}
+
+// Evidenzia solo i resort con nome incluso in resortNames
+window.highlightResorts = function(resortNames) {
+    d3.selectAll(".resort-circle").attr("fill", "crimson");
+    resortNames.forEach(name => {
+        const className = `.resort-${sanitizeID(name)}`;
+        d3.selectAll(className).attr("fill", "limegreen");
+    });
+};
+
+// Ripristina colore rosso per tutti
+window.resetResortColors = function() {
+    d3.selectAll(".resort-circle").attr("fill", "crimson");
+};
 
 new Mappa(mapContainer);
