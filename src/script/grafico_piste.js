@@ -112,7 +112,8 @@ function updatePisteChart(data, maxAltitude) {
 
     // ✅ Legenda
     const legend = svgPiste.append("g")
-        .attr("transform", `translate(0, ${heightPiste + 60})`);
+        .attr("transform", `translate(${widthPiste / 2 - 180}, ${heightPiste + 60})`);
+
 
     const legendItems = ["beginner", "intermediate", "difficult"];
 
