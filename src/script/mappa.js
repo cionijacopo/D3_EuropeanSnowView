@@ -216,47 +216,53 @@ class Mappa {
 
 
     loadResorts(code) {
-    this.currentCountryCode = code; // memorizza codice corrente
+        this.currentCountryCode = code; // memorizza codice corrente
 
-    // Rimuove sempre i punti precedenti PRIMA
-    this.resortPoints.selectAll("circle").remove();
+        // Rimuove sempre i punti precedenti PRIMA
+        this.resortPoints.selectAll("circle").remove();
 
-    const file = `../data/resorts_by_country/coordinates/${code}_with_coordinates.csv`;
+        const file = `../data/resorts_by_country/coordinates/${code}_with_coordinates.csv`;
 
-    d3.csv(file).then(data => {
-        // Se nel frattempo l’utente ha cliccato su un altro stato, annulla
-        if (this.currentCountryCode !== code) return;
+        d3.csv(file).then(data => {
+            // Se nel frattempo l’utente ha cliccato su un altro stato, annulla
+            if (this.currentCountryCode !== code) return;
 
-        const valid = data.filter(d => d.latitude && d.longitude);
+            const valid = data.filter(d => d.latitude && d.longitude);
 
-        this.resortPoints.selectAll("circle")
-            .data(valid)
-            .enter()
-            .append("circle")
-            .attr("cx", d => this.projection([+d.longitude, +d.latitude])[0])
-            .attr("cy", d => this.projection([+d.longitude, +d.latitude])[1])
-            .attr("r", 2)
-            .attr("fill", "crimson")
-            .attr("stroke", "#fff")
-            .attr("stroke-width", 0.5)
-            .attr("class", d => `resort-circle resort-${sanitizeID(d.Resort)}`)
-            .on("mouseover", (event, d) => {
-                this.tooltip
-                    .style("visibility", "visible")
-                    .text(d.Resort)
-                    .style("top", (event.pageY - 10) + "px")
-                    .style("left", (event.pageX + 10) + "px");
-            })
-            .on("mousemove", event => {
-                this.tooltip
-                    .style("top", (event.pageY - 10) + "px")
-                    .style("left", (event.pageX + 10) + "px");
-            })
-            .on("mouseout", () => {
-                this.tooltip.style("visibility", "hidden");
-            });
-    });
-}
+            this.resortPoints.selectAll("circle")
+                .data(valid)
+                .enter()
+                .append("circle")
+                .attr("cx", d => this.projection([+d.longitude, +d.latitude])[0])
+                .attr("cy", d => this.projection([+d.longitude, +d.latitude])[1])
+                .attr("r", 2)
+                .attr("fill", "crimson")
+                .attr("stroke", "#fff")
+                .attr("stroke-width", 0.5)
+                .attr("class", d => `resort-circle resort-${sanitizeID(d.Resort)}`)
+                .on("mouseover", (event, d) => {
+                    this.tooltip
+                        .style("visibility", "visible")
+                        .text(d.Resort)
+                        .style("top", (event.pageY - 10) + "px")
+                        .style("left", (event.pageX + 10) + "px");
+                })
+                .on("mousemove", event => {
+                    this.tooltip
+                        .style("top", (event.pageY - 10) + "px")
+                        .style("left", (event.pageX + 10) + "px");
+                })
+                .on("mouseout", () => {
+                    this.tooltip.style("visibility", "hidden");
+                });
+
+            // inizializza il grafico delle piste per difficoltà
+            const maxAltitude = 3000; // puoi anche farlo dinamico più avanti
+            updatePisteChart(data, maxAltitude);
+            d3.select("#pisteContainer").style("display", "block");
+        });
+    }
+
 
 
     setTitle(name, value = null) {

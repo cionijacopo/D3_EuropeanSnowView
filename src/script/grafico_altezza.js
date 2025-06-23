@@ -7,7 +7,7 @@ const chartContainer = d3.select("#grafico")
     .style("justify-content", "center");
 
 const margin = { top: 60, right: 40, bottom: 110, left: 90 },
-      width = 450 - margin.left - margin.right,
+      width = 500 - margin.left - margin.right,
       height = 400 - margin.top - margin.bottom;
 
 // Append SVG
