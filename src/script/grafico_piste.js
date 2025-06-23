@@ -2,7 +2,7 @@ const pisteContainer = d3.select("#grafico")
   .append("div")
   .attr("id", "pisteContainer")
   .style("display", "none")
-  .style("margin-top", "30px");
+  .style("margin-top", "8px");
 
 const marginPiste = { top: 30, right: 30, bottom: 50, left: 150 },
       widthPiste = 500 - marginPiste.left - marginPiste.right,

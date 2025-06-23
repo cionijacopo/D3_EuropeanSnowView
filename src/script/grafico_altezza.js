@@ -6,7 +6,7 @@ const chartContainer = d3.select("#grafico")
     .style("align-items", "center")
     .style("justify-content", "center");
 
-const margin = { top: 60, right: 40, bottom: 110, left: 90 },
+const margin = { top: 60, right: 40, bottom: 75, left: 90 },
       width = 500 - margin.left - margin.right,
       height = 400 - margin.top - margin.bottom;
 
@@ -20,11 +20,12 @@ const svg = chartContainer.append("svg")
     .attr("transform", `translate(${margin.left},${margin.top})`);
 
 // Slider container
-const sliderContainer = chartContainer.append("div")
+const sliderContainer = d3.select("#grafico")
+    .append("div")
     .attr("id", "sliderContainer")
-    .style("height", "350px")
+    .style("height", "auto")
     .style("display", "none")
-    .style("margin-left", "10px")
+    .style("margin-top", "20px")
     .style("align-self", "center");
 
 
@@ -165,17 +166,17 @@ function drawAltitudeChart(stateCode) {
             .attr("max", roundedMax)
             .attr("step", 250)
             .attr("value", roundedMax)
-            .style("writing-mode", "bt-lr")
-            .style("transform", "rotate(270deg)")
-            .style("height", "150px");
+            .style("width", "250px");  // larghezza orizzontale
 
         // Etichetta dinamica dello slider
         const sliderLabel = d3.select("#sliderContainer").append("div")
             .attr("id", "sliderLabel")
-            .style("margin-top", "10px")
+            .style("margin-top", "4px")
             .style("text-align", "center")
-            .style("font-size", "14px")
+            .style("width", "100%") // forza centratura
+            .style("font-size", "13px")
             .text(`Max Altitude: ${roundedMax}m`);
+
 
         // Disegna inizialmente il grafico
         updateAltitudeChart(data, roundedMax);
