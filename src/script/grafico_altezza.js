@@ -203,6 +203,7 @@ function hideAltitudeChart() {
     d3.select("#altitudeChart").style("display", "none");
     d3.select("#sliderContainer").style("display", "none");
     d3.select("#pisteContainer").style("display", "none");
+    d3.select("#prezzoContainer").style("display", "none");
     // Mostra di nuovo lo spider plot
     d3.select("#spiderContainer").style("display", "block");
 }

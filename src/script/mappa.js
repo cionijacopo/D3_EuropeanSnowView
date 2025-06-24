@@ -260,6 +260,10 @@ class Mappa {
             const maxAltitude = 3000; // puoi anche farlo dinamico più avanti
             updatePisteChart(data, maxAltitude);
             d3.select("#pisteContainer").style("display", "block");
+            if (typeof updatePrezzoChart === "function") {
+                updatePrezzoChart(data);
+                d3.select("#prezzoContainer").style("display", "block");
+            }
         });
     }
 
