@@ -1,4 +1,3 @@
-// Seleziona la cella 2,1 della tabella
 const prezzoContainer = d3.select("#cella-2-1")
     .append("div")
     .attr("id", "prezzoContainer")
@@ -17,6 +16,8 @@ const svgPrezzo = prezzoContainer.append("svg")
     .append("g")
     .attr("transform", `translate(${marginPrezzo.left}, ${marginPrezzo.top})`);
 
+const europeanAvg = 33.8; // media europea calcolata da media_per_country.csv
+
 function updatePrezzoChart(data) {
     svgPrezzo.selectAll("*").remove();
 
@@ -26,8 +27,12 @@ function updatePrezzoChart(data) {
         return;
     }
 
+    const mean = d3.mean(prices);
+    const deviation = d3.deviation(prices);
+
+    const maxPrice = d3.max(prices);
     const x = d3.scaleLinear()
-        .domain([0, d3.max(prices)])
+        .domain([0, maxPrice * 1.05])
         .nice()
         .range([0, widthPrezzo]);
 
@@ -53,6 +58,45 @@ function updatePrezzoChart(data) {
         .attr("height", d => heightPrezzo - y(d.length))
         .style("fill", "steelblue");
 
+    // Curva gaussiana
+    if (mean && deviation) {
+        const line = d3.line()
+            .x(d => x(d.x))
+            .y(d => y(d.y));
+
+        const curveData = d3.range(x.domain()[0], x.domain()[1], 0.1).map(xVal => ({
+            x: xVal,
+            y: (1 / (deviation * Math.sqrt(2 * Math.PI))) * Math.exp(-0.5 * Math.pow((xVal - mean) / deviation, 2)) * prices.length * (bins[0].x1 - bins[0].x0)
+        }));
+
+        svgPrezzo.append("path")
+            .datum(curveData)
+            .attr("fill", "none")
+            .attr("stroke", "#ff7f00")
+            .attr("stroke-width", 2)
+            .attr("d", line);
+    }
+
+    // Linea verticale per media del paese (rossa tratteggiata)
+    svgPrezzo.append("line")
+        .attr("x1", x(mean))
+        .attr("x2", x(mean))
+        .attr("y1", 0)
+        .attr("y2", heightPrezzo)
+        .attr("stroke", "red")
+        .attr("stroke-width", 2)
+        .attr("stroke-dasharray", "4,4");
+
+    // Linea verticale per media europea (#c412c4)
+    svgPrezzo.append("line")
+        .attr("x1", x(europeanAvg))
+        .attr("x2", x(europeanAvg))
+        .attr("y1", 0)
+        .attr("y2", heightPrezzo)
+        .attr("stroke", "#c412c4")
+        .attr("stroke-width", 2)
+        .attr("stroke-dasharray", "4,4");
+
     // Assi
     svgPrezzo.append("g")
         .attr("transform", `translate(0, ${heightPrezzo})`)
@@ -76,6 +120,37 @@ function updatePrezzoChart(data) {
         .style("text-anchor", "middle")
         .style("font-size", "14px")
         .text("Number of Resorts");
+
+    // Legenda
+    const legend = svgPrezzo.append("g")
+        .attr("transform", `translate(10, 10)`);
+
+    const legendData = [
+        { label: "Country Avg", color: "red", dash: "4,4" },
+        { label: "European Avg", color: "#c412c4", dash: "4,4" },
+        { label: "Gaussian Curve", color: "#ff7f00", dash: null }
+    ];
+
+    legend.selectAll("line")
+        .data(legendData)
+        .enter()
+        .append("line")
+        .attr("x1", 0)
+        .attr("x2", 20)
+        .attr("y1", (d, i) => i * 20)
+        .attr("y2", (d, i) => i * 20)
+        .attr("stroke", d => d.color)
+        .attr("stroke-width", 2)
+        .attr("stroke-dasharray", d => d.dash || "none");
+
+    legend.selectAll("text")
+        .data(legendData)
+        .enter()
+        .append("text")
+        .attr("x", 25)
+        .attr("y", (d, i) => i * 20 + 5)
+        .style("font-size", "12px")
+        .text(d => d.label);
 
     prezzoContainer.style("display", "block");
 }

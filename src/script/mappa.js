@@ -175,6 +175,7 @@ class Mappa {
             d3.select("#altitudeContainer").style("display", "none");
             d3.select("#pisteContainer").style("display", "none");
             d3.select("#prezzoContainer").style("display", "none");
+            d3.select("#impiantiContainer").style("display", "none");
             d3.select("#sliderContainer").style("display", "none");
 
             d3.select("#footer")
@@ -215,6 +216,12 @@ class Mappa {
                 if (typeof updatePrezzoChart === "function") {
                     updatePrezzoChart(data);
                     d3.select("#prezzoContainer").style("display", "block");
+                }
+
+                // Disegna grafico impianti 
+                if (typeof updateImpiantiChart === "function") {
+                    updateImpiantiChart(data);
+                    d3.select("#impiantiContainer").style("display", "block");
                 }
             });
             d3.select("#vistaIniziale").style("display", "none");
