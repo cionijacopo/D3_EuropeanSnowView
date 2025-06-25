@@ -1,12 +1,10 @@
-// grafico_prezzi.js
-
-// Crea un contenitore per il grafico sotto la mappa
-const prezzoContainer = d3.select("#grafico")
+// Seleziona la cella 2,1 della tabella
+const prezzoContainer = d3.select("#cella-2-1")
     .append("div")
     .attr("id", "prezzoContainer")
     .style("display", "none")
-    .style("margin-top", "10px")  // margine minimo per avvicinarlo agli altri grafici
-    .style("width", "100%")       // si adatta al contenitore
+    .style("margin-top", "10px")
+    .style("width", "100%")
     .style("text-align", "center");
 
 const marginPrezzo = { top: 30, right: 30, bottom: 50, left: 60 },
@@ -14,20 +12,20 @@ const marginPrezzo = { top: 30, right: 30, bottom: 50, left: 60 },
       heightPrezzo = 300 - marginPrezzo.top - marginPrezzo.bottom;
 
 const svgPrezzo = prezzoContainer.append("svg")
-    .attr("width", 500)
-    .attr("height", 200)
-    .style("margin", "auto")
+    .attr("width", widthPrezzo + marginPrezzo.left + marginPrezzo.right)
+    .attr("height", heightPrezzo + marginPrezzo.top + marginPrezzo.bottom)
     .append("g")
-    .attr("transform", "translate(50, 20)");
+    .attr("transform", `translate(${marginPrezzo.left}, ${marginPrezzo.top})`);
 
-// Funzione per aggiornare il grafico dei prezzi
 function updatePrezzoChart(data) {
     svgPrezzo.selectAll("*").remove();
 
     const prices = data.map(d => +d.DayPassPriceAdult).filter(d => !isNaN(d));
-    if (prices.length === 0) return;
+    if (prices.length === 0) {
+        prezzoContainer.style("display", "none");
+        return;
+    }
 
-    // Crea i bin per l'istogramma
     const x = d3.scaleLinear()
         .domain([0, d3.max(prices)])
         .nice()
@@ -41,6 +39,7 @@ function updatePrezzoChart(data) {
 
     const y = d3.scaleLinear()
         .domain([0, d3.max(bins, d => d.length)])
+        .nice()
         .range([heightPrezzo, 0]);
 
     // Istogramma
@@ -56,7 +55,7 @@ function updatePrezzoChart(data) {
 
     // Assi
     svgPrezzo.append("g")
-        .attr("transform", `translate(0,${heightPrezzo})`)
+        .attr("transform", `translate(0, ${heightPrezzo})`)
         .call(d3.axisBottom(x).tickFormat(d => `€${d}`));
 
     svgPrezzo.append("g")

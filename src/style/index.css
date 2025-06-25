@@ -126,8 +126,59 @@ li {
 
 
 #altitudeContainer {
-    flex-direction: row;
+    display: flex;
     justify-content: center;
     align-items: center;
     gap: 20px;
 }
+
+
+#altezzaContainer,
+#prezzoContainer,
+#pisteContainer {
+    width: 100%;
+}
+
+#vistaStato {
+  padding: 20px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+#tabellaDettaglio {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-rows: auto auto;
+  gap: 10px;
+}
+
+.cella {
+  background-color: #f9f9f9;
+  padding: 5px;
+  min-height: 300px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  display:flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+/* Solo nella vista stato (zoom) */
+#vistaStato #mappa {
+    width: 100%;
+    height: 100%;
+}
+
+#vistaStato #mapArea {
+    width: 100% !important;
+    height: 100% !important;
+}
+
+#cella-1-1 {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+}
+

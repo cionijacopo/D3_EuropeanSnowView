@@ -158,21 +158,28 @@ class Mappa {
             this.setTitle(null);
             this.resortPoints.selectAll("circle").remove();
 
-            // Riattiva contenuti standard
-            d3.select("#grafico")
-                .style("visibility", "visible")
-                .style("pointer-events", "auto");
+            // Torna alla vista iniziale
+            d3.select("#vistaIniziale").style("display", "block");
+            d3.select("#mapLegend").style("display", "block");
+            d3.select("#vistaStato").style("display", "none");
+            d3.select("#spiderContainer").style("display", "block");
+
+            // Riporta mappa nel contenitore europeo (#mid)
+            const mid = document.querySelector("#mid");
+            const mappa = document.querySelector("#mappa");
+            if (mid && mappa) {
+                mid.insertBefore(mappa, mid.firstChild);
+            }
+
+            // Nascondi contenitori della vista dettaglio
+            d3.select("#altitudeContainer").style("display", "none");
+            d3.select("#pisteContainer").style("display", "none");
+            d3.select("#prezzoContainer").style("display", "none");
+            d3.select("#sliderContainer").style("display", "none");
 
             d3.select("#footer")
                 .style("visibility", "visible")
                 .style("pointer-events", "auto");
-
-            // Nasconde il grafico altitudine
-            hideAltitudeChart();
-
-            // Mostra di nuovo lo spider plot
-            d3.select("#spiderContainer")
-                .style("display", "block");
 
         } else {
             // Zoom su paese
@@ -188,29 +195,40 @@ class Mappa {
                 .attr("transform", `translate(${translate}) scale(${scale})`)
                 .attr('data-zoom', code);
 
-            const label = value === 1 ? "Ski Resort" : "Ski Resorts";
-            this.setTitle(`${feature.properties.NAME} — ${value} ${label}`);
-
             this.resortPoints.selectAll("*").remove();
             this.loadResorts(code);
-            // Nasconde spiderplot
-            d3.select("#spiderContainer")
-                .style("display", "none");
+            const file = `../data/resorts_by_country/coordinates/${code}_with_coordinates.csv`;
+            d3.csv(file).then(data => {
+                const label = value === 1 ? "Ski Resort" : "Ski Resorts";
+                this.setTitle(`${feature.properties.NAME} — ${value} ${label}`);
+                // Disegna grafico altitudine
+                drawAltitudeChart(code);  // già esistente, con slider
 
-            // Mostra il grafico altitudine
-            d3.select("#altitudeContainer")
-                .style("display", "flex");
+                // Disegna grafico piste
+                const maxAltitude = 3000; 
+                if (typeof updatePisteChart === "function") {
+                    updatePisteChart(data, maxAltitude);
+                    d3.select("#pisteContainer").style("display", "block");
+                }
 
-            // Disegna il nuovo grafico
-            drawAltitudeChart(code);
+                // Disegna grafico prezzi
+                if (typeof updatePrezzoChart === "function") {
+                    updatePrezzoChart(data);
+                    d3.select("#prezzoContainer").style("display", "block");
+                }
+            });
+            d3.select("#vistaIniziale").style("display", "none");
+            d3.select("#mapLegend").style("display", "none");
+            const mappaContent = document.querySelector("#mappa");
+            const nuovaCella = document.querySelector("#cella-1-1");
+            if (mappaContent && nuovaCella) {
+                nuovaCella.appendChild(mappaContent);
+            }
+            d3.select("#vistaStato").style("display", "block");
 
             d3.select("#footer")
                 .style("visibility", "hidden")
                 .style("pointer-events", "none");
-
-            // Mostra il grafico di altitudine
-           // d3.select("#altitudeChartContainer")
-           //     .style("display", "flex");
         }
     }
 
@@ -255,15 +273,6 @@ class Mappa {
                 .on("mouseout", () => {
                     this.tooltip.style("visibility", "hidden");
                 });
-
-            // inizializza il grafico delle piste per difficoltà
-            const maxAltitude = 3000; // puoi anche farlo dinamico più avanti
-            updatePisteChart(data, maxAltitude);
-            d3.select("#pisteContainer").style("display", "block");
-            if (typeof updatePrezzoChart === "function") {
-                updatePrezzoChart(data);
-                d3.select("#prezzoContainer").style("display", "block");
-            }
         });
     }
 

@@ -1,8 +1,9 @@
-const chartContainer = d3.select("#grafico")
+// Seleziona la cella 1,3 della tabella per il grafico altitudini
+const chartContainer = d3.select("#cella-1-3")
     .append("div")
     .attr("id", "altitudeContainer")
-    .style("display", "none")  // inizialmente nascosto
-    .style("flex-direction", "row")
+    .style("display", "none")
+    .style("flex-direction", "column")
     .style("align-items", "center")
     .style("justify-content", "center");
 
@@ -20,7 +21,7 @@ const svg = chartContainer.append("svg")
     .attr("transform", `translate(${margin.left},${margin.top})`);
 
 // Slider container
-const sliderContainer = d3.select("#grafico")
+const sliderContainer = d3.select("#cella-1-3")
     .append("div")
     .attr("id", "sliderContainer")
     .style("height", "auto")
@@ -148,6 +149,7 @@ function drawAltitudeChart(stateCode) {
     d3.csv(file).then(data => {
         d3.select("#spiderContainer").style("display", "none");
         d3.select("#altitudeChart").style("display", "block");
+        d3.select("#altitudeContainer").style("display", "flex");
         d3.select("#sliderContainer").style("display", "flex");
 
         // Calcola l’altitudine massima effettiva nel dataset

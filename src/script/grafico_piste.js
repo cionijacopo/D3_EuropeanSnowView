@@ -1,4 +1,4 @@
-const pisteContainer = d3.select("#grafico")
+const pisteContainer = d3.select("#cella-2-3")
   .append("div")
   .attr("id", "pisteContainer")
   .style("display", "none")
@@ -14,8 +14,6 @@ const svgPiste = pisteContainer.append("svg")
   .attr("height", heightPiste + marginPiste.top + marginPiste.bottom + 50)
   .append("g")
   .attr("transform", `translate(${marginPiste.left},${marginPiste.top})`);
-
-pisteContainer.style("display", "none");
 
 function updatePisteChart(data, maxAltitude) {
     svgPiste.selectAll("*").remove();
