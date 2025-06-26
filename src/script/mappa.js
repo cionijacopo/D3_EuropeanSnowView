@@ -205,10 +205,9 @@ class Mappa {
                 // Disegna grafico altitudine
                 drawAltitudeChart(code);  // già esistente, con slider
 
-                // Disegna grafico piste
-                const maxAltitude = 3000; 
-                if (typeof updatePisteChart === "function") {
-                    updatePisteChart(data, maxAltitude);
+                // Disegna scatter difficoltà piste
+                if (typeof drawDifficultyScatter === "function") {
+                    drawDifficultyScatter(code);
                     d3.select("#pisteContainer").style("display", "block");
                 }
 

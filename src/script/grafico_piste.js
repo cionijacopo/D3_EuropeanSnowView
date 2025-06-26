@@ -1,3 +1,4 @@
+// Cella 2,3 – Scatterplot difficoltà vs altitudine 
 const pisteContainer = d3.select("#cella-2-3")
   .append("div")
   .attr("id", "pisteContainer")
@@ -5,7 +6,6 @@ const pisteContainer = d3.select("#cella-2-3")
   .style("margin-top", "8px")
   .style("width", "100%");
 
-// Wrapper centrato
 const innerWrapperPiste = pisteContainer.append("div")
   .attr("id", "pisteInnerWrapper")
   .style("display", "flex")
@@ -15,135 +15,159 @@ const innerWrapperPiste = pisteContainer.append("div")
   .style("height", "100%")
   .style("width", "100%");
 
-const marginPiste = { top: 30, right: 30, bottom: 50, left: 150 },
+const marginPiste = { top: 70, right: 30, bottom: 60, left: 60 },
       widthPiste = 500 - marginPiste.left - marginPiste.right,
       heightPiste = 400 - marginPiste.top - marginPiste.bottom;
 
 const svgPiste = innerWrapperPiste.append("svg")
   .attr("id", "pisteChart")
-  .attr("viewBox", `0 0 ${widthPiste + marginPiste.left + marginPiste.right} ${heightPiste + marginPiste.top + marginPiste.bottom + 60}`) // +60 per la legenda
+  .attr("viewBox", `0 0 ${widthPiste + marginPiste.left + marginPiste.right} ${heightPiste + marginPiste.top + marginPiste.bottom}`)
   .attr("preserveAspectRatio", "xMidYMid meet")
   .style("width", "100%")
   .style("height", "auto")
   .append("g")
-  .attr("transform", `translate(${(widthPiste + marginPiste.left + marginPiste.right)/2 - widthPiste/2},${marginPiste.top})`);
+  .attr("transform", `translate(${marginPiste.left},${marginPiste.top})`);
 
+const tooltipPiste = d3.select("body")
+  .append("div")
+  .attr("class", "tooltip")
+  .style("position", "absolute")
+  .style("background", "#ffffff")
+  .style("border", "1px solid #ccc")
+  .style("padding", "8px")
+  .style("border-radius", "4px")
+  .style("pointer-events", "none")
+  .style("font-size", "13px")
+  .style("box-shadow", "0 0 5px rgba(0,0,0,0.2)")
+  .style("display", "none");
 
-function updatePisteChart(data, maxAltitude) {
-    svgPiste.selectAll("*").remove();
+function drawDifficultyScatter(stateCode) {
+  svgPiste.selectAll("*").remove();
 
-    const bins = [0, 1000, 1250, 1500, 1750, 2000, 2500, 3000];
+  const file = `../data/resorts_by_country/coordinates/${stateCode}_with_coordinates.csv`;
 
-    const filtered = data.filter(d =>
-        +d.HighestPoint <= maxAltitude &&
-        !isNaN(+d.BeginnerSlope) &&
-        !isNaN(+d.IntermediateSlope) &&
-        !isNaN(+d.DifficultSlope)
-    );
+  d3.csv(file).then(data => {
+    const colorScale = d3.scaleLinear()
+      .domain([1, 3])
+      .range(["#00cc44", "#cc0000"]);
 
-    const grouped = d3.rollups(
-        filtered,
-        v => ({
-          beginner: d3.sum(v, d => +d.BeginnerSlope),
-          intermediate: d3.sum(v, d => +d.IntermediateSlope),
-          difficult: d3.sum(v, d => +d.DifficultSlope)
-        }),
-        d => {
-          const alt = +d.HighestPoint;
-          for (let i = 0; i < bins.length - 1; i++) {
-              if (alt >= bins[i] && alt < bins[i + 1]) return `${bins[i]}–${bins[i + 1]}m`;
-          }
-          return `≥ ${bins[bins.length - 1]}m`;
-        }
-    );
-
-    const orderedBins = [
-        "0–1000m", "1000–1250m", "1250–1500m", "1500–1750m",
-        "1750–2000m", "2000–2500m", "2500–3000m", "≥ 3000m"
-    ];
-
-    const categories = ["beginner", "intermediate", "difficult"];
-    const colors = {
-        beginner: "#519a77",
-        intermediate: "#ec8609",
-        difficult: "#a72707"
-    };
+    const processed = data.map(d => {
+      const beginner = +d.BeginnerSlope || 0;
+      const intermediate = +d.IntermediateSlope || 0;
+      const difficult = +d.DifficultSlope || 0;
+      const total = beginner + intermediate + difficult;
+      const score = total === 0 ? 0 : (beginner + 2 * intermediate + 3 * difficult) / total;
+      return {
+        name: d.Resort,
+        highest: +d.HighestPoint || 0,
+        beginner,
+        intermediate,
+        difficult,
+        total,
+        score
+      };
+    }).filter(d => d.total > 0 && d.highest > 0);
 
     const x = d3.scaleLinear()
-        .domain([0, d3.max(grouped, d => Math.max(
-          d[1].beginner,
-          d[1].intermediate,
-          d[1].difficult
-        )) || 100])
-        .nice()
-        .range([0, widthPiste]);
+      .domain(d3.extent(processed, d => d.highest))
+      .nice()
+      .range([0, widthPiste]);
 
-    const y0 = d3.scaleBand()
-        .domain(orderedBins.filter(label => grouped.some(d => d[0] === label)))
-        .range([0, heightPiste])
-        .padding(0.2);
-
-    const y1 = d3.scaleBand()
-        .domain(categories)
-        .range([0, y0.bandwidth()])
-        .padding(0.05);
-
-    svgPiste.selectAll("g")
-        .data(grouped)
-        .enter()
-        .append("g")
-        .attr("transform", d => `translate(0, ${y0(d[0])})`)
-        .selectAll("rect")
-        .data(d => categories.map(key => ({ key, value: d[1][key] })))
-        .enter()
-        .append("rect")
-        .attr("y", d => y1(d.key))
-        .attr("height", y1.bandwidth())
-        .attr("x", 0)
-        .attr("width", d => x(d.value))
-        .attr("fill", d => colors[d.key]);
-
-    // Assi
-    svgPiste.append("g").call(d3.axisLeft(y0));
+    const y = d3.scaleLinear()
+      .domain([1, 3])
+      .nice()
+      .range([heightPiste, 0]);
 
     svgPiste.append("g")
-        .attr("transform", `translate(0, ${heightPiste})`)
-        .call(d3.axisBottom(x).ticks(6).tickFormat(d3.format(",.0f")))
-        .selectAll("text")
-        .style("font-size", "12px");
+      .attr("transform", `translate(0, ${heightPiste})`)
+      .call(d3.axisBottom(x));
 
-    // Etichetta asse X
+    svgPiste.append("g")
+      .call(d3.axisLeft(y));
+
     svgPiste.append("text")
-        .attr("x", widthPiste / 2)
-        .attr("y", heightPiste + 40)
-        .style("text-anchor", "middle")
-        .style("font-size", "14px")
-        .text("Total sum (in Km) of Slopes by Difficulty");
+      .attr("x", widthPiste / 2)
+      .attr("y", heightPiste + 40)
+      .style("text-anchor", "middle")
+      .style("font-size", "14px")
+      .text("Highest Point (m)");
 
-    // Legenda in alto a destra
-    const legend = svgPiste.append("g")
-        .attr("transform", `translate(${widthPiste - 10}, -20)`);  // posizione più alta
+    svgPiste.append("text")
+      .attr("transform", "rotate(-90)")
+      .attr("x", -heightPiste / 2)
+      .attr("y", -45)
+      .style("text-anchor", "middle")
+      .style("font-size", "14px")
+      .text("Average Difficulty Score");
 
-    const legendItems = ["beginner", "intermediate", "difficult"];
+    svgPiste.selectAll("circle")
+      .data(processed)
+      .enter()
+      .append("circle")
+      .attr("cx", d => x(d.highest))
+      .attr("cy", d => y(d.score))
+      .attr("r", 7)
+      .attr("fill", d => colorScale(d.score))
+      .on("mouseover", (event, d) => {
+        tooltipPiste
+          .style("display", "block")
+          .html(`<strong>${d.name}</strong><br/>
+                Beginner: ${d.beginner} km<br/>
+                Intermediate: ${d.intermediate} km<br/>
+                Difficult: ${d.difficult} km<br/>
+                Total: ${d.total} km<br/>
+                Score: ${d.score.toFixed(2)}`);
+      })
+      .on("mousemove", event => {
+        const tooltipWidth = tooltipPiste.node().offsetWidth;
+        const tooltipHeight = tooltipPiste.node().offsetHeight;
+        const pageX = event.pageX;
+        const pageY = event.pageY;
+        const offsetX = (pageX + tooltipWidth > window.innerWidth) ? -tooltipWidth - 20 : 10;
 
-    legend.selectAll("rect")
-        .data(legendItems)
-        .enter()
-        .append("rect")
-        .attr("x", 0)
-        .attr("y", (d, i) => i * 20)
-        .attr("width", 18)
-        .attr("height", 18)
-        .attr("fill", d => colors[d]);
+        tooltipPiste
+          .style("left", (pageX + offsetX) + "px")
+          .style("top", (pageY - tooltipHeight / 2) + "px");
+      })
+      .on("mouseout", () => tooltipPiste.style("display", "none"));
 
-    legend.selectAll("text")
-        .data(legendItems)
-        .enter()
-        .append("text")
-        .attr("x", 24)
-        .attr("y", (d, i) => i * 20 + 9)
-        .attr("dy", ".35em")
-        .style("font-size", "12px")
-        .text(d => d.charAt(0).toUpperCase() + d.slice(1));
+    // Legenda colori difficoltà – spostata in alto a destra e più in basso
+    const defs = svgPiste.append("defs");
+    const gradient = defs.append("linearGradient")
+      .attr("id", "difficultyGradient")
+      .attr("x1", "0%")
+      .attr("x2", "100%")
+      .attr("y1", "0%")
+      .attr("y2", "0%");
 
+    gradient.append("stop")
+      .attr("offset", "0%")
+      .attr("stop-color", "#00cc44");
+
+    gradient.append("stop")
+      .attr("offset", "100%")
+      .attr("stop-color", "#cc0000");
+
+    svgPiste.append("rect")
+      .attr("x", widthPiste - 160)
+      .attr("y", -10)
+      .attr("width", 120)
+      .attr("height", 10)
+      .style("fill", "url(#difficultyGradient)");
+
+    svgPiste.append("text")
+      .attr("x", widthPiste - 165)
+      .attr("y", 15)
+      .style("font-size", "11px")
+      .text("Easy");
+
+    svgPiste.append("text")
+      .attr("x", widthPiste - 40)
+      .attr("y", 15)
+      .style("font-size", "11px")
+      .style("text-anchor", "end")
+      .text("Hard");
+
+    d3.select("#pisteContainer").style("display", "block");
+  });
 }
