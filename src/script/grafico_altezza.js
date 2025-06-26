@@ -5,12 +5,13 @@ const chartContainer = d3.select("#cella-1-3")
   .style("display", "none")
   .style("width", "100%")
   .style("height", "100%")
+  .style("max-width", "600px")
   .style("display", "flex")
   .style("flex-direction", "column")
   .style("align-items", "center")
   .style("justify-content", "center");
 
-const margin = { top: 60, right: 40, bottom: 90, left: 90 },
+const margin = { top: 60, right: 40, bottom: 95, left: 90 },
       width = 500 - margin.left - margin.right,
       height = 400 - margin.top - margin.bottom;
 
@@ -120,8 +121,8 @@ function updateAltitudeChart(data, maxAltitude) {
     .text("Total sum (in Km) of slopes");
 
   svg.append("text")
-    .attr("x", width / 2)
-    .attr("y", height + 90)
+    .attr("x", (width + margin.left + margin.right) / 2 - margin.left) 
+    .attr("y", height + 80)
     .style("text-anchor", "middle")
     .style("font-size", "14px")
     .text("Altitude Range (m)");
@@ -157,7 +158,8 @@ function drawAltitudeChart(stateCode) {
       .attr("max", roundedMax)
       .attr("step", 250)
       .attr("value", roundedMax)
-      .style("width", "250px");
+      .style("width", "250px")
+      .style("align-self", "center");
 
     const sliderLabel = d3.select("#sliderContainer").append("div")
       .attr("id", "sliderLabel")
