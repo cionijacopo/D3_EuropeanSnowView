@@ -172,6 +172,7 @@ class Mappa {
             }
 
             // Nascondi contenitori della vista dettaglio
+            d3.select("#featureContainer").style("display", "none");
             d3.select("#altitudeContainer").style("display", "none");
             d3.select("#pisteContainer").style("display", "none");
             d3.select("#prezzoContainer").style("display", "none");
@@ -202,6 +203,13 @@ class Mappa {
             d3.csv(file).then(data => {
                 const label = value === 1 ? "Ski Resort" : "Ski Resorts";
                 this.setTitle(`${feature.properties.NAME} — ${value} ${label}`);
+
+                // Disegna icone
+                if (typeof updateFeatureIcons === "function") {
+                    updateFeatureIcons(code);
+                    d3.select("#featureContainer").style("display", "block");
+                }
+
                 // Disegna grafico altitudine
                 drawAltitudeChart(code);  // già esistente, con slider
 
