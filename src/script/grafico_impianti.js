@@ -7,15 +7,27 @@ const impiantiContainer = d3.select("#cella-2-2")
     .style("width", "100%")
     .style("text-align", "center");
 
+// Wrapper interno per svg + etichetta
+const innerWrapper = impiantiContainer.append("div")
+    .attr("id", "impiantiInnerWrapper")
+    .style("display", "flex")
+    .style("flex-direction", "column")
+    .style("align-items", "center")
+    .style("justify-content", "center")
+    .style("gap", "8px")
+    .style("height", "100%");
+
 // Dimensioni e margini
 const marginImpianti = { top: 30, right: 30, bottom: 50, left: 60 },
       widthImpianti = 500 - marginImpianti.left - marginImpianti.right,
       heightImpianti = 300 - marginImpianti.top - marginImpianti.bottom;
 
-// Append SVG
-const svgImpianti = impiantiContainer.append("svg")
-    .attr("width", widthImpianti + marginImpianti.left + marginImpianti.right)
-    .attr("height", heightImpianti + marginImpianti.top + marginImpianti.bottom)
+// Append SVG dentro il wrapper
+const svgImpianti = innerWrapper.append("svg")
+    .attr("viewBox", `0 0 ${widthImpianti + marginImpianti.left + marginImpianti.right} ${heightImpianti + marginImpianti.top + marginImpianti.bottom}`)
+    .attr("preserveAspectRatio", "xMidYMid meet")
+    .style("width", "100%")
+    .style("height", "auto")
     .append("g")
     .attr("transform", `translate(${marginImpianti.left}, ${marginImpianti.top})`);
 
@@ -125,10 +137,9 @@ function updateImpiantiChart(data) {
         .style("font-size", "14px")
         .text("Estimated Frequency");
 
-    // Media LiftCapacity (solo come testo sotto)
-    impiantiContainer.append("div")
+    // Etichetta sotto
+    innerWrapper.append("div")
         .attr("id", "liftCapacityLabel")
-        .style("margin-top", "8px")
         .style("font-size", "13px")
         .style("color", "#444")
         .text(`Avg Lift Capacity: ${Math.round(avgCapacity)} people/hour`);

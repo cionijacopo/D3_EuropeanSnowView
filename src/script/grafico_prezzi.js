@@ -4,15 +4,26 @@ const prezzoContainer = d3.select("#cella-2-1")
     .style("display", "none")
     .style("margin-top", "10px")
     .style("width", "100%")
+    .style("height", "100%")
     .style("text-align", "center");
 
 const marginPrezzo = { top: 30, right: 30, bottom: 50, left: 60 },
       widthPrezzo = 500 - marginPrezzo.left - marginPrezzo.right,
       heightPrezzo = 300 - marginPrezzo.top - marginPrezzo.bottom;
 
-const svgPrezzo = prezzoContainer.append("svg")
-    .attr("width", widthPrezzo + marginPrezzo.left + marginPrezzo.right)
-    .attr("height", heightPrezzo + marginPrezzo.top + marginPrezzo.bottom)
+const innerWrapperPrezzo = prezzoContainer.append("div")
+    .attr("id", "prezzoInnerWrapper")
+    .style("display", "flex")
+    .style("flex-direction", "column")
+    .style("align-items", "center")
+    .style("justify-content", "center")
+    .style("height", "100%");
+
+const svgPrezzo = innerWrapperPrezzo.append("svg")
+    .attr("viewBox", `0 0 ${widthPrezzo + marginPrezzo.left + marginPrezzo.right} ${heightPrezzo + marginPrezzo.top + marginPrezzo.bottom}`)
+    .attr("preserveAspectRatio", "xMidYMid meet")
+    .style("width", "100%")
+    .style("height", "auto")
     .append("g")
     .attr("transform", `translate(${marginPrezzo.left}, ${marginPrezzo.top})`);
 

@@ -2,18 +2,32 @@ const pisteContainer = d3.select("#cella-2-3")
   .append("div")
   .attr("id", "pisteContainer")
   .style("display", "none")
-  .style("margin-top", "8px");
+  .style("margin-top", "8px")
+  .style("width", "100%");
+
+// Wrapper centrato
+const innerWrapperPiste = pisteContainer.append("div")
+  .attr("id", "pisteInnerWrapper")
+  .style("display", "flex")
+  .style("flex-direction", "column")
+  .style("align-items", "center")
+  .style("justify-content", "center")
+  .style("height", "100%")
+  .style("width", "100%");
 
 const marginPiste = { top: 30, right: 30, bottom: 50, left: 150 },
       widthPiste = 500 - marginPiste.left - marginPiste.right,
       heightPiste = 400 - marginPiste.top - marginPiste.bottom;
 
-const svgPiste = pisteContainer.append("svg")
+const svgPiste = innerWrapperPiste.append("svg")
   .attr("id", "pisteChart")
-  .attr("width", widthPiste + marginPiste.left + marginPiste.right)
-  .attr("height", heightPiste + marginPiste.top + marginPiste.bottom + 50)
+  .attr("viewBox", `0 0 ${widthPiste + marginPiste.left + marginPiste.right} ${heightPiste + marginPiste.top + marginPiste.bottom + 60}`) // +60 per la legenda
+  .attr("preserveAspectRatio", "xMidYMid meet")
+  .style("width", "100%")
+  .style("height", "auto")
   .append("g")
-  .attr("transform", `translate(${marginPiste.left},${marginPiste.top})`);
+  .attr("transform", `translate(${(widthPiste + marginPiste.left + marginPiste.right)/2 - widthPiste/2},${marginPiste.top})`);
+
 
 function updatePisteChart(data, maxAltitude) {
     svgPiste.selectAll("*").remove();
@@ -30,16 +44,16 @@ function updatePisteChart(data, maxAltitude) {
     const grouped = d3.rollups(
         filtered,
         v => ({
-        beginner: d3.sum(v, d => +d.BeginnerSlope),
-        intermediate: d3.sum(v, d => +d.IntermediateSlope),
-        difficult: d3.sum(v, d => +d.DifficultSlope)
+          beginner: d3.sum(v, d => +d.BeginnerSlope),
+          intermediate: d3.sum(v, d => +d.IntermediateSlope),
+          difficult: d3.sum(v, d => +d.DifficultSlope)
         }),
         d => {
-        const alt = +d.HighestPoint;
-        for (let i = 0; i < bins.length - 1; i++) {
-            if (alt >= bins[i] && alt < bins[i + 1]) return `${bins[i]}–${bins[i + 1]}m`;
-        }
-        return `≥ ${bins[bins.length - 1]}m`;
+          const alt = +d.HighestPoint;
+          for (let i = 0; i < bins.length - 1; i++) {
+              if (alt >= bins[i] && alt < bins[i + 1]) return `${bins[i]}–${bins[i + 1]}m`;
+          }
+          return `≥ ${bins[bins.length - 1]}m`;
         }
     );
 
@@ -57,9 +71,9 @@ function updatePisteChart(data, maxAltitude) {
 
     const x = d3.scaleLinear()
         .domain([0, d3.max(grouped, d => Math.max(
-        d[1].beginner,
-        d[1].intermediate,
-        d[1].difficult
+          d[1].beginner,
+          d[1].intermediate,
+          d[1].difficult
         )) || 100])
         .nice()
         .range([0, widthPiste]);
@@ -89,16 +103,14 @@ function updatePisteChart(data, maxAltitude) {
         .attr("width", d => x(d.value))
         .attr("fill", d => colors[d.key]);
 
+    // Assi
     svgPiste.append("g").call(d3.axisLeft(y0));
+
     svgPiste.append("g")
         .attr("transform", `translate(0, ${heightPiste})`)
-        .call(
-            d3.axisBottom(x)
-            .ticks(6)                        // massimo 6 tick
-            .tickFormat(d3.format(",.0f"))  // formatta come "1,000" senza decimali
-        )
+        .call(d3.axisBottom(x).ticks(6).tickFormat(d3.format(",.0f")))
         .selectAll("text")
-        .style("font-size", "12px"); 
+        .style("font-size", "12px");
 
     // Etichetta asse X
     svgPiste.append("text")
@@ -108,10 +120,9 @@ function updatePisteChart(data, maxAltitude) {
         .style("font-size", "14px")
         .text("Total sum (in Km) of Slopes by Difficulty");
 
-    // ✅ Legenda
+    // Legenda in alto a destra
     const legend = svgPiste.append("g")
-        .attr("transform", `translate(${widthPiste / 2 - 180}, ${heightPiste + 60})`);
-
+        .attr("transform", `translate(${widthPiste - 10}, -20)`);  // posizione più alta
 
     const legendItems = ["beginner", "intermediate", "difficult"];
 
@@ -119,7 +130,8 @@ function updatePisteChart(data, maxAltitude) {
         .data(legendItems)
         .enter()
         .append("rect")
-        .attr("x", (d, i) => i * 120)
+        .attr("x", 0)
+        .attr("y", (d, i) => i * 20)
         .attr("width", 18)
         .attr("height", 18)
         .attr("fill", d => colors[d]);
@@ -128,8 +140,10 @@ function updatePisteChart(data, maxAltitude) {
         .data(legendItems)
         .enter()
         .append("text")
-        .attr("x", (d, i) => i * 120 + 24)
-        .attr("y", 14)
+        .attr("x", 24)
+        .attr("y", (d, i) => i * 20 + 9)
+        .attr("dy", ".35em")
         .style("font-size", "12px")
         .text(d => d.charAt(0).toUpperCase() + d.slice(1));
+
 }
