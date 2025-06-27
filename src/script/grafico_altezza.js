@@ -94,7 +94,7 @@ function updateAltitudeChart(data, maxAltitude) {
     .attr("y", d => y(d[1].totalSlope))
     .attr("width", x.bandwidth())
     .attr("height", d => height - y(d[1].totalSlope))
-    .attr("fill", "#007BFF")
+    .attr("fill", "steelblue")
     .on("mouseover", (event, d) => {
       tooltip.style("display", "block")
         .style("left", (event.pageX - 20) + "px")
@@ -159,7 +159,8 @@ function drawAltitudeChart(stateCode) {
       .attr("step", 250)
       .attr("value", roundedMax)
       .style("width", "250px")
-      .style("align-self", "center");
+      .style("align-self", "center")
+      .style("accent-color", "steelblue");
 
     const sliderLabel = d3.select("#sliderContainer").append("div")
       .attr("id", "sliderLabel")
