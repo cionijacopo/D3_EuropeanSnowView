@@ -58,7 +58,6 @@ function updatePrezzoChart(data) {
         .nice()
         .range([heightPrezzo, 0]);
 
-    // Istogramma
     svgPrezzo.selectAll("rect")
         .data(bins)
         .enter()
@@ -67,9 +66,15 @@ function updatePrezzoChart(data) {
         .attr("y", d => y(d.length))
         .attr("width", d => Math.max(0, x(d.x1) - x(d.x0) - 1))
         .attr("height", d => heightPrezzo - y(d.length))
-        .style("fill", "steelblue");
+        .style("fill", "steelblue")
+        .on("mouseover", (event, d) => {
+            const matched = data.filter(e => +e.DayPassPriceAdult >= d.x0 && +e.DayPassPriceAdult < d.x1).map(e => e.Resort);
+            highlightResorts(matched);
+        })
+        .on("mouseout", () => {
+            resetResortColors();
+        });
 
-    // Curva gaussiana
     if (mean && deviation) {
         const line = d3.line()
             .x(d => x(d.x))
@@ -88,7 +93,6 @@ function updatePrezzoChart(data) {
             .attr("d", line);
     }
 
-    // Linea verticale per media del paese (rossa tratteggiata)
     svgPrezzo.append("line")
         .attr("x1", x(mean))
         .attr("x2", x(mean))
@@ -98,7 +102,6 @@ function updatePrezzoChart(data) {
         .attr("stroke-width", 2)
         .attr("stroke-dasharray", "4,4");
 
-    // Linea verticale per media europea (#c412c4)
     svgPrezzo.append("line")
         .attr("x1", x(europeanAvg))
         .attr("x2", x(europeanAvg))
@@ -108,7 +111,6 @@ function updatePrezzoChart(data) {
         .attr("stroke-width", 2)
         .attr("stroke-dasharray", "4,4");
 
-    // Assi
     svgPrezzo.append("g")
         .attr("transform", `translate(0, ${heightPrezzo})`)
         .call(d3.axisBottom(x).tickFormat(d => `€${d}`));
@@ -116,7 +118,6 @@ function updatePrezzoChart(data) {
     svgPrezzo.append("g")
         .call(d3.axisLeft(y));
 
-    // Etichette
     svgPrezzo.append("text")
         .attr("x", widthPrezzo / 2)
         .attr("y", heightPrezzo + 40)
@@ -132,7 +133,6 @@ function updatePrezzoChart(data) {
         .style("font-size", "14px")
         .text("Number of Resorts");
 
-    // Legenda
     const legend = svgPrezzo.append("g")
         .attr("transform", `translate(10, 10)`);
 
