@@ -1,41 +1,52 @@
 body{
-    background-color: #f5f5f5;
     margin: 0;
     padding: 0;
     overflow-x: hidden;
+    background-color: #e5e5f7;
+    opacity: 1;
+    background: repeating-linear-gradient( -45deg, #4682b4, #4682b4 1px, #e5e5f7 1px, #e5e5f7 25px );
+    background-attachment: fixed;
 }
 
 /* Container principale che affianca mappa e grafico */
 .container {
     display: flex;
     flex-direction: row;
-    width: 100%;
+    width: 99%;
     margin-top: 10px;
     margin-bottom: 10px;
+    margin-left: 7px;
     justify-content: space-between; /* oppure center */
-    align-items: flex-start;
+    align-items: stretch;
     gap: 20px;
 }
 
 #header {
+    font-family: 'Nunito', sans-serif;
     position: relative;
-    width: 100%;
+    width: auto;
     height: 50px;
-    margin: 0 auto;
     border-radius: 5px;
+    margin-left: 10px;
+    margin-right: 10px;
+    margin-top: 10px;
+    /*margin-bottom: 10px;*/
     background: darkslategray;
-    opacity: .9;
+    opacity: 1;
     color: white;
     text-align: center;
 }
 
 #footer {
-    width: 100%;
+    font-family: 'Nunito', sans-serif;
+    width: auto;
     background: darkslategray;
-    opacity: 0.9;
+    opacity: 1;
     color: white;
     border-radius: 5px;  
-    margin: 0;
+    margin-left: 10px;
+    margin-right: 10px;
+    margin-bottom: 0;
     padding: 0;
 }
 
@@ -52,7 +63,7 @@ body{
     display: flex;                    
     justify-content: space-between;  
     align-items: center;             
-    padding: 20px;                   
+    padding: 5px;                   
     font-size: 14pt;
 }
 
@@ -60,6 +71,7 @@ body{
     max-width: 250px;
     height: auto;
     margin-left: 40px;
+    margin-right: 20px;
 }
 
 li { 
@@ -68,6 +80,8 @@ li {
 
 #rights {
     text-align: center;
+    padding-bottom: 15px;
+    margin-bottom: 0px;
 }
 
 #mappa .itemTitle {
@@ -110,6 +124,7 @@ li {
 }
 
 .itemTitle {
+    font-family: 'Nunito', sans-serif;
     text-align: center;
     font-size: 18pt;
     font-weight: bold;
@@ -178,6 +193,9 @@ li {
 #vistaStato #mapArea {
     width: 100% !important;
     height: 100% !important;
+}
+#vistaStato #mapTitle {
+    padding-top: 10px;
 }
 
 #cella-1-1 {

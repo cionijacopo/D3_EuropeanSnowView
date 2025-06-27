@@ -179,10 +179,11 @@ class Mappa {
             d3.select("#impiantiContainer").style("display", "none");
             d3.select("#sliderContainer").style("display", "none");
 
+            /*
             d3.select("#footer")
                 .style("visibility", "visible")
                 .style("pointer-events", "auto");
-
+            */
         } else {
             // Zoom su paese
             const bounds = this.path.bounds(feature);
@@ -240,9 +241,11 @@ class Mappa {
             }
             d3.select("#vistaStato").style("display", "block");
 
+            /*
             d3.select("#footer")
                 .style("visibility", "hidden")
                 .style("pointer-events", "none");
+            */
         }
     }
 
