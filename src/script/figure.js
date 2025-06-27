@@ -6,7 +6,7 @@ const featureContainer = d3.select("#cella-1-2")
   .style("flex-direction", "row")
   .style("align-items", "center")
   .style("justify-content", "center")
-  .style("gap", "72px")
+  .style("gap", "48px")
   .style("width", "100%")
   .style("height", "100%");
 
@@ -24,6 +24,7 @@ const featuresGroups = [
 ];
 
 const tooltips = {};
+const resortMap = {}; // mappa dei resort per ogni feature (id)
 
 featuresGroups.forEach(group => {
   const column = featureContainer.append("div")
@@ -70,35 +71,51 @@ featuresGroups.forEach(group => {
 
     tooltips[f.id] = tooltip;
 
-    img.on("mouseover", () => tooltip.style("display", "block"))
-       .on("mouseout", () => tooltip.style("display", "none"));
+    img.on("mouseover", () => {
+      tooltip.style("display", "block");
+      if (resortMap[f.id]) highlightResorts(resortMap[f.id]);
+    })
+    .on("mouseout", () => {
+      tooltip.style("display", "none");
+      resetResortColors();
+    });
   });
 });
 
 window.updateFeatureIcons = function (code) {
   const file = `../data/resorts_by_country/coordinates/${code}_with_coordinates.csv`;
   d3.csv(file).then(data => {
-    const countNight = data.filter(d => d.NightSki && d.NightSki.toLowerCase() === "yes").length;
-    const countPark = data.filter(d => d.Snowparks && d.Snowparks.toLowerCase() === "yes").length;
-    const countCannons = data.filter(d => +d.SnowCannons > 0).length;
-    const totalCannons = d3.sum(data, d => +d.SnowCannons || 0);
+    const nightResorts = data.filter(d => d.NightSki && d.NightSki.toLowerCase() === "yes");
+    const parkResorts = data.filter(d => d.Snowparks && d.Snowparks.toLowerCase() === "yes");
+    const cannonResorts = data.filter(d => +d.SnowCannons > 0);
+    const liftResorts = data.filter(d => +d.SurfaceLifts > 0);
+    const chairResorts = data.filter(d => +d.ChairLifts > 0);
+    const gondolaResorts = data.filter(d => +d.GondolaLifts > 0);
 
+    resortMap["NightSki"] = nightResorts.map(d => d.Resort);
+    resortMap["SnowPark"] = parkResorts.map(d => d.Resort);
+    resortMap["SnowCannons"] = cannonResorts.map(d => d.Resort);
+    resortMap["SkiLift"] = liftResorts.map(d => d.Resort);
+    resortMap["ChairLift"] = chairResorts.map(d => d.Resort);
+    resortMap["GondolaLift"] = gondolaResorts.map(d => d.Resort);
+
+    d3.select("#icon-NightSki").style("opacity", nightResorts.length > 0 ? 1 : 0.25);
+    d3.select("#icon-SnowPark").style("opacity", parkResorts.length > 0 ? 1 : 0.25);
+    d3.select("#icon-SnowCannons").style("opacity", cannonResorts.length > 0 ? 1 : 0.25);
+    d3.select("#icon-SkiLift").style("opacity", liftResorts.length > 0 ? 1 : 0.25);
+    d3.select("#icon-ChairLift").style("opacity", chairResorts.length > 0 ? 1 : 0.25);
+    d3.select("#icon-GondolaLift").style("opacity", gondolaResorts.length > 0 ? 1 : 0.25);
+
+    const totalCannons = d3.sum(data, d => +d.SnowCannons || 0);
     const sumLift = d3.sum(data, d => +d.SurfaceLifts || 0);
     const sumChair = d3.sum(data, d => +d.ChairLifts || 0);
     const sumGondola = d3.sum(data, d => +d.GondolaLifts || 0);
 
-    d3.select("#icon-NightSki").style("opacity", countNight > 0 ? 1 : 0.25);
-    d3.select("#icon-SnowPark").style("opacity", countPark > 0 ? 1 : 0.25);
-    d3.select("#icon-SnowCannons").style("opacity", countCannons > 0 ? 1 : 0.25);
-    d3.select("#icon-SkiLift").style("opacity", sumLift > 0 ? 1 : 0.25);
-    d3.select("#icon-ChairLift").style("opacity", sumChair > 0 ? 1 : 0.25);
-    d3.select("#icon-GondolaLift").style("opacity", sumGondola > 0 ? 1 : 0.25);
-
-    tooltips["NightSki"].text(`${countNight} resort${countNight !== 1 ? "s" : ""} with night skiing`);
-    tooltips["SnowPark"].text(`${countPark} resort${countPark !== 1 ? "s" : ""} with snow park`);
-    tooltips["SnowCannons"].text(`${countCannons} resort${countCannons !== 1 ? "s" : ""} with snow cannons\n(${totalCannons} cannons total)`);
-    tooltips["SkiLift"].text(`${sumLift} surface lift${sumLift !== 1 ? "s" : ""}`);
-    tooltips["ChairLift"].text(`${sumChair} chair lift${sumChair !== 1 ? "s" : ""}`);
-    tooltips["GondolaLift"].text(`${sumGondola} gondola lift${sumGondola !== 1 ? "s" : ""}`);
+    tooltips["NightSki"].text(`${nightResorts.length} resort${nightResorts.length !== 1 ? "s" : ""} with Night Skiing`);
+    tooltips["SnowPark"].text(`${parkResorts.length} resort${parkResorts.length !== 1 ? "s" : ""} with SnowPark`);
+    tooltips["SnowCannons"].text(`${cannonResorts.length} resort${cannonResorts.length !== 1 ? "s" : ""} with SnowCannons\n(${totalCannons} total)`);
+    tooltips["SkiLift"].text(`${liftResorts.length} resort${liftResorts.length !== 1 ? "s" : ""} with Ski lifts (${sumLift} total)`);
+    tooltips["ChairLift"].text(`${chairResorts.length} resort${chairResorts.length !== 1 ? "s" : ""} with Chair lifts (${sumChair} total)`);
+    tooltips["GondolaLift"].text(`${gondolaResorts.length} resort${gondolaResorts.length !== 1 ? "s" : ""} with Gondola lifts (${sumGondola} total)`);
   });
 };
