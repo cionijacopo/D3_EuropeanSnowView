@@ -139,7 +139,7 @@ function updateAltitudeChart(data, maxAltitude) {
 }
 
 function drawAltitudeChart(stateCode) {
-  const file = `../data/resorts_by_country/coordinates/${stateCode}_with_coordinates.csv`;
+  const file = `data/resorts_by_country/coordinates/${stateCode}_with_coordinates.csv`;
   d3.csv(file).then(data => {
     d3.select("#spiderContainer").style("display", "none");
     d3.select("#altitudeChart").style("display", "block");

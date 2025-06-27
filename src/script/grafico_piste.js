@@ -44,7 +44,7 @@ const tooltipPiste = d3.select("body")
 function drawDifficultyScatter(stateCode) {
   svgPiste.selectAll("*").remove();
 
-  const file = `../data/resorts_by_country/coordinates/${stateCode}_with_coordinates.csv`;
+  const file = `data/resorts_by_country/coordinates/${stateCode}_with_coordinates.csv`;
 
   d3.csv(file).then(data => {
     const colorScale = d3.scaleLinear()

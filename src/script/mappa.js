@@ -4,8 +4,8 @@ var mapWidth = mapContainer.node().getBoundingClientRect().width,
     legendWidth = mapWidth,
     legendHeight = 100;
 
-var geoJSONPath = '../data/geojson/europe.geojson';
-var csvPath = '../data/resorts.csv';
+var geoJSONPath = 'data/geojson/europe.geojson';
+var csvPath = 'data/resorts.csv';
 
 class Mappa {
     constructor(container) {
@@ -200,7 +200,7 @@ class Mappa {
 
             this.resortPoints.selectAll("*").remove();
             this.loadResorts(code);
-            const file = `../data/resorts_by_country/coordinates/${code}_with_coordinates.csv`;
+            const file = `data/resorts_by_country/coordinates/${code}_with_coordinates.csv`;
             d3.csv(file).then(data => {
                 const label = value === 1 ? "Ski Resort" : "Ski Resorts";
                 this.setTitle(`${feature.properties.NAME} — ${value} ${label}`);
@@ -256,7 +256,7 @@ class Mappa {
         // Rimuove sempre i punti precedenti PRIMA
         this.resortPoints.selectAll("circle").remove();
 
-        const file = `../data/resorts_by_country/coordinates/${code}_with_coordinates.csv`;
+        const file = `data/resorts_by_country/coordinates/${code}_with_coordinates.csv`;
 
         d3.csv(file).then(data => {
             // Se nel frattempo l’utente ha cliccato su un altro stato, annulla

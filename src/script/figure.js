@@ -12,14 +12,14 @@ const featureContainer = d3.select("#cella-1-2")
 
 const featuresGroups = [
   [
-    { id: "NightSki", label: "Night Ski", src: "../../imgs/NightSki.png" },
-    { id: "SnowCannons", label: "Snow Cannons", src: "../../imgs/SnowCannons.png" },
-    { id: "SnowPark", label: "Snow Park", src: "../../imgs/SnowPark.png" }
+    { id: "NightSki", label: "Night Ski", src: "imgs/NightSki.png" },
+    { id: "SnowCannons", label: "Snow Cannons", src: "imgs/SnowCannons.png" },
+    { id: "SnowPark", label: "Snow Park", src: "imgs/SnowPark.png" }
   ],
   [
-    { id: "SkiLift", label: "Ski Lifts", src: "../../imgs/SkiLift.png" },
-    { id: "ChairLift", label: "Chair Lifts", src: "../../imgs/ChairLift.png" },
-    { id: "GondolaLift", label: "Gondola Lifts", src: "../../imgs/GondolaLift.png" }
+    { id: "SkiLift", label: "Ski Lifts", src: "imgs/SkiLift.png" },
+    { id: "ChairLift", label: "Chair Lifts", src: "imgs/ChairLift.png" },
+    { id: "GondolaLift", label: "Gondola Lifts", src: "imgs/GondolaLift.png" }
   ]
 ];
 
@@ -83,7 +83,7 @@ featuresGroups.forEach(group => {
 });
 
 window.updateFeatureIcons = function (code) {
-  const file = `../data/resorts_by_country/coordinates/${code}_with_coordinates.csv`;
+  const file = `data/resorts_by_country/coordinates/${code}_with_coordinates.csv`;
   d3.csv(file).then(data => {
     const nightResorts = data.filter(d => d.NightSki && d.NightSki.toLowerCase() === "yes");
     const parkResorts = data.filter(d => d.Snowparks && d.Snowparks.toLowerCase() === "yes");

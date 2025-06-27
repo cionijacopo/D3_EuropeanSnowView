@@ -66,7 +66,7 @@ const readableLabels = {
 };
 
 // Caricamento del CSV con i dati medi per stato
-d3.csv("../data/media_per_country.csv", d3.autoType).then(data => {
+d3.csv("data/media_per_country.csv", d3.autoType).then(data => {
     radarData = data;
 
     // Costruisci le scale normalizzate per ogni variabile
