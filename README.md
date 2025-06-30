@@ -4,6 +4,7 @@
 
 ## 📁 Struttura del progetto (semplificata)
 
+```
 📁 D3_EuropeanSnowView/
 ├── 📄 index.html                 # Pagina principale del progetto
 ├── 📁 src/
@@ -24,6 +25,7 @@
 │               ├── 📄 FR_with_coordinates.csv
 │               ├── 📄 IT_with_coordinates.csv
 │               └── ... (altri file CSV per paese)
+```
 
 ## 🌍 Funzionalità
 
@@ -46,6 +48,6 @@
 - HTML5 / CSS3 / JavaScript
 - Responsive layout 
 
-## ⚙️ Avvio locale
+## ⚙️ Avvio & Tests
 
 Link: https://cionijacopo.github.io/D3_EuropeanSnowView/
