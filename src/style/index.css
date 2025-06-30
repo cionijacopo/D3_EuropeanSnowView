@@ -1,3 +1,4 @@
+/* Stile generale della pagina*/
 body{
     margin: 0;
     padding: 0;
@@ -21,6 +22,7 @@ body{
     gap: 20px;
 }
 
+/* Header e Footer*/
 #header {
     font-family: 'Nunito', sans-serif;
     position: relative;
@@ -50,6 +52,7 @@ body{
     padding: 0;
 }
 
+/* Titolo ed Ending */
 
 #titolo{
     position: relative;
@@ -84,6 +87,8 @@ li {
     margin-bottom: 0px;
 }
 
+/* Gestione della mappa */
+
 #mappa .itemTitle {
     text-align: center;
     font-size: 18pt;
@@ -113,6 +118,7 @@ li {
     gap: 8px;               /* spazio tra i due */
 }
 
+/* Titoli */
 
 .item {
     flex-grow: 1;
@@ -131,6 +137,8 @@ li {
     margin-top: 2%;
     margin-bottom: 2%;
 }
+
+/* Slider */
 
 #sliderContainer {
     display: flex;
@@ -155,6 +163,8 @@ li {
 #pisteContainer {
     width: 100%;
 }
+
+/* Griglia 2x3*/
 
 #vistaStato {
   padding: 20px;

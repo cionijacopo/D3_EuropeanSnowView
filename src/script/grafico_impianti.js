@@ -31,10 +31,15 @@ const svgImpianti = innerWrapper.append("svg")
     .append("g")
     .attr("transform", `translate(${marginImpianti.left}, ${marginImpianti.top})`);
 
+/**
+ * Aggiorna il grafico delle distribuzioni gaussiane per tipo di impianto
+ * @param {Array} data - Dataset CSV per uno stato selezionato
+ */
 function updateImpiantiChart(data) {
     svgImpianti.selectAll("*").remove();
     d3.select("#liftCapacityLabel").remove();
 
+    // Tipi di impianto da analizzare
     const impiantoTypes = ["SurfaceLifts", "ChairLifts", "GondolaLifts"];
     const typeLabels = {
         "SurfaceLifts": "Draglift",
@@ -43,10 +48,12 @@ function updateImpiantiChart(data) {
     };
     const baseColors = d3.schemeCategory10.slice(0, impiantoTypes.length);
 
+    // Calcola la media della capacità totale (info testuale)
     const avgCapacity = d3.mean(data.map(d => +d.LiftCapacity).filter(d => !isNaN(d)));
 
     const distributions = [];
 
+    // Per ciascun tipo, calcola la curva normale stimata
     impiantoTypes.forEach((type, i) => {
         const values = data
             .map(d => +d[type])
@@ -70,7 +77,7 @@ function updateImpiantiChart(data) {
         }
     });
 
-    // Definisci scale
+    // Scale X e Y comuni per tutte le curve
     const x = d3.scaleLinear()
         .domain([0, d3.max(distributions, d => d3.max(d.data, p => p.x))])
         .range([0, widthImpianti]);

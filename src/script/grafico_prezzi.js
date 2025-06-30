@@ -1,3 +1,4 @@
+// Crea un contenitore per il grafico nella cella 2,1 della tabella
 const prezzoContainer = d3.select("#cella-2-1")
     .append("div")
     .attr("id", "prezzoContainer")
@@ -7,10 +8,12 @@ const prezzoContainer = d3.select("#cella-2-1")
     .style("height", "100%")
     .style("text-align", "center");
 
+// Margini e dimensioni interne del grafico
 const marginPrezzo = { top: 30, right: 30, bottom: 50, left: 60 },
-      widthPrezzo = 500 - marginPrezzo.left - marginPrezzo.right,
-      heightPrezzo = 300 - marginPrezzo.top - marginPrezzo.bottom;
+    widthPrezzo = 500 - marginPrezzo.left - marginPrezzo.right,
+    heightPrezzo = 300 - marginPrezzo.top - marginPrezzo.bottom;
 
+// Wrapper interno per centrare il grafico
 const innerWrapperPrezzo = prezzoContainer.append("div")
     .attr("id", "prezzoInnerWrapper")
     .style("display", "flex")
@@ -19,6 +22,7 @@ const innerWrapperPrezzo = prezzoContainer.append("div")
     .style("justify-content", "center")
     .style("height", "100%");
 
+// Aggiunta dello SVG responsive con gruppo tradotto per i margini
 const svgPrezzo = innerWrapperPrezzo.append("svg")
     .attr("viewBox", `0 0 ${widthPrezzo + marginPrezzo.left + marginPrezzo.right} ${heightPrezzo + marginPrezzo.top + marginPrezzo.bottom}`)
     .attr("preserveAspectRatio", "xMidYMid meet")
@@ -29,35 +33,45 @@ const svgPrezzo = innerWrapperPrezzo.append("svg")
 
 const europeanAvg = 33.8; // media europea calcolata da media_per_country.csv
 
+/**
+ * Disegna o aggiorna il grafico dei prezzi
+ * @param {Array} data - Array di resort con colonna DayPassPriceAdult
+ */
 function updatePrezzoChart(data) {
     svgPrezzo.selectAll("*").remove();
 
+    // Estrae e filtra i prezzi validi
     const prices = data.map(d => +d.DayPassPriceAdult).filter(d => !isNaN(d));
     if (prices.length === 0) {
         prezzoContainer.style("display", "none");
         return;
     }
 
+    // Calcola media e deviazione standard per la curva gaussiana
     const mean = d3.mean(prices);
     const deviation = d3.deviation(prices);
 
+    // Scala X lineare basata sul prezzo massimo
     const maxPrice = d3.max(prices);
     const x = d3.scaleLinear()
         .domain([0, maxPrice * 1.05])
         .nice()
         .range([0, widthPrezzo]);
 
+    // Istogramma con 20 bin
     const histogram = d3.bin()
         .domain(x.domain())
         .thresholds(x.ticks(20));
 
     const bins = histogram(prices);
 
+    // Scala Y per altezza delle barre (conteggio resort)
     const y = d3.scaleLinear()
         .domain([0, d3.max(bins, d => d.length)])
         .nice()
         .range([heightPrezzo, 0]);
 
+    // Disegna le barre dell'istogramma
     svgPrezzo.selectAll("rect")
         .data(bins)
         .enter()
@@ -67,6 +81,7 @@ function updatePrezzoChart(data) {
         .attr("width", d => Math.max(0, x(d.x1) - x(d.x0) - 1))
         .attr("height", d => heightPrezzo - y(d.length))
         .style("fill", "steelblue")
+        // Evidenzia i resort che rientrano nel bin corrente
         .on("mouseover", (event, d) => {
             const matched = data.filter(e => +e.DayPassPriceAdult >= d.x0 && +e.DayPassPriceAdult < d.x1).map(e => e.Resort);
             highlightResorts(matched);
@@ -75,11 +90,13 @@ function updatePrezzoChart(data) {
             resetResortColors();
         });
 
+    // Se media e deviazione sono definite, disegna curva gaussiana stimata
     if (mean && deviation) {
         const line = d3.line()
             .x(d => x(d.x))
             .y(d => y(d.y));
 
+        // Dati per curva normale (approssimazione continua)
         const curveData = d3.range(x.domain()[0], x.domain()[1], 0.1).map(xVal => ({
             x: xVal,
             y: (1 / (deviation * Math.sqrt(2 * Math.PI))) * Math.exp(-0.5 * Math.pow((xVal - mean) / deviation, 2)) * prices.length * (bins[0].x1 - bins[0].x0)
@@ -93,6 +110,7 @@ function updatePrezzoChart(data) {
             .attr("d", line);
     }
 
+    // Linea rossa tratteggiata per la media del paese
     svgPrezzo.append("line")
         .attr("x1", x(mean))
         .attr("x2", x(mean))
@@ -102,6 +120,7 @@ function updatePrezzoChart(data) {
         .attr("stroke-width", 2)
         .attr("stroke-dasharray", "4,4");
 
+    // Linea viola tratteggiata per la media europea
     svgPrezzo.append("line")
         .attr("x1", x(europeanAvg))
         .attr("x2", x(europeanAvg))
@@ -111,13 +130,17 @@ function updatePrezzoChart(data) {
         .attr("stroke-width", 2)
         .attr("stroke-dasharray", "4,4");
 
+    // Asse X con simbolo euro
     svgPrezzo.append("g")
         .attr("transform", `translate(0, ${heightPrezzo})`)
         .call(d3.axisBottom(x).tickFormat(d => `€${d}`));
 
+    // Asse Y (conteggio resort)
     svgPrezzo.append("g")
         .call(d3.axisLeft(y));
 
+
+    // Etichetta asse X
     svgPrezzo.append("text")
         .attr("x", widthPrezzo / 2)
         .attr("y", heightPrezzo + 40)
@@ -133,6 +156,7 @@ function updatePrezzoChart(data) {
         .style("font-size", "14px")
         .text("Number of Resorts");
 
+    // Legenda con linee colorate per curva e medie
     const legend = svgPrezzo.append("g")
         .attr("transform", `translate(10, 10)`);
 
@@ -142,6 +166,7 @@ function updatePrezzoChart(data) {
         { label: "Gaussian Curve", color: "#ff7f00", dash: null }
     ];
 
+    // Linee legenda
     legend.selectAll("line")
         .data(legendData)
         .enter()
@@ -154,6 +179,7 @@ function updatePrezzoChart(data) {
         .attr("stroke-width", 2)
         .attr("stroke-dasharray", d => d.dash || "none");
 
+    // Etichette legenda
     legend.selectAll("text")
         .data(legendData)
         .enter()
@@ -163,5 +189,6 @@ function updatePrezzoChart(data) {
         .style("font-size", "12px")
         .text(d => d.label);
 
+    // Mostra tutto
     prezzoContainer.style("display", "block");
 }

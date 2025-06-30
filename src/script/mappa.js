@@ -1,20 +1,28 @@
+// mappa.js — Gestione della mappa e interazioni con stati e resort
+
+// Seleziona il contenitore della mappa
 var mapContainer = d3.select('#mappa');
 var mapWidth = mapContainer.node().getBoundingClientRect().width,
     mapHeight = 400,
     legendWidth = mapWidth,
     legendHeight = 100;
 
+// Percorsi per dati geografici e CSV
 var geoJSONPath = 'data/geojson/europe.geojson';
 var csvPath = 'data/resorts.csv';
 
+// Classe principale per la mappa
 class Mappa {
     constructor(container) {
         this.parent = container;
         this.name = 'Europe';
         this.currentState = null;
+
+        // Proiezione geografica per mappa
         this.projection = d3.geoNaturalEarth1();
         this.path = d3.geoPath().projection(this.projection);
 
+        // Titolo
         if (this.parent.select('#mapTitle').empty()) {
             this.title = this.parent.append('div')
                 .attr('class', 'itemTitle')
@@ -22,6 +30,7 @@ class Mappa {
         }
         this.setTitle(null);
 
+        // Tooltip per i resort
         this.tooltip = d3.select('body').append('div')
             .attr('id', 'resortTooltip')
             .style('position', 'absolute')
@@ -33,23 +42,28 @@ class Mappa {
             .style('font-size', '12px')
             .style('visibility', 'hidden');
 
+        // SVG principale della mappa
         this.area = this.parent.append('svg')
             .attr('id', 'mapArea')
             .attr('width', mapWidth)
             .attr('height', mapHeight)
             .call(responsivefy);
 
+        // Gruppo per gestire zoom
         this.zoomGroup = this.area.append('g').attr('id', 'zoomGroup');
 
+        // Sfondo grigio chiaro
         this.background = this.zoomGroup.append('rect')
             .attr('class', 'background')
             .attr('width', mapWidth)
             .attr('height', mapHeight)
             .attr('fill', '#f5f5f5');
 
+        // Gruppi per stati e resort
         this.states = this.zoomGroup.append('g').attr('id', 'statesGroup');
         this.resortPoints = this.zoomGroup.append('g').attr('id', 'resortPoints');
 
+        // Legenda colori
         this.legend = this.parent.append('div')
             .attr('id', 'mapLegend')
             .append('svg')
@@ -60,6 +74,7 @@ class Mappa {
             .attr('id', 'legendGroup')
             .attr('transform', 'translate(30,30)');
 
+        // Caricamento dati e costruzione mappa
         Promise.all([
             d3.json(geoJSONPath),
             d3.csv(csvPath)
@@ -70,6 +85,7 @@ class Mappa {
         });
     }
 
+    // Costruisco mappa con colorazione per numero resort
     build(geojson, csvData) {
         const resortMap = new Map(csvData.map(d => [d.country_code, +d.resorts_count]));
 
@@ -85,6 +101,7 @@ class Mappa {
             .append('path')
             .attr('d', this.path)
             .attr('class', 'mapRegion')
+            // coloro solo se c'è un resort 
             .attr('fill', d => {
                 const code = d.properties.ISO2;
                 const value = resortMap.get(code);
@@ -102,12 +119,14 @@ class Mappa {
 
                 this.setTitle(d.properties.NAME, value);
 
+                // Colorazione dello stato su cui ho il cursore 
                 const node = d3.select(event.currentTarget);
                 if (!node.attr('original-fill')) {
                     node.attr('original-fill', node.attr('fill'));
                 }
                 node.attr('fill', 'crimson');
 
+                // Aggiorno lo spiderplot
                 updateSpider(code);
             })
             .on('mouseout', (event, d) => {
@@ -124,16 +143,19 @@ class Mappa {
                     this.setTitle();
                 }
 
+                // Svuoto lo spiderplot 
                 updateSpider(null);
             })
             .on('click', (event, d) => {
                 const code = d.properties.ISO2;
                 const value = resortMap.get(code) || 0;
+                // Zoommo solo se lo stato cliccato ha almeno un resort
                 if(value > 0) {
                     this.handleZoom(d, value);
                 }
             });
-                
+        
+        // Legenda 
         const legend = d3.legendColor()
             .title('Number of Ski Resorts')
             .scale(colorScale)
@@ -145,6 +167,7 @@ class Mappa {
         d3.select('#legendGroup').call(legend);
     }
 
+    // Gestisce lo zoom su uno stato o ritorno alla vista iniziale
     handleZoom(feature, value) {
         const code = feature.properties.ISO2;
         const isZoomed = this.zoomGroup.attr('data-zoom') === code;
@@ -179,11 +202,6 @@ class Mappa {
             d3.select("#impiantiContainer").style("display", "none");
             d3.select("#sliderContainer").style("display", "none");
 
-            /*
-            d3.select("#footer")
-                .style("visibility", "visible")
-                .style("pointer-events", "auto");
-            */
         } else {
             // Zoom su paese
             const bounds = this.path.bounds(feature);
@@ -202,6 +220,7 @@ class Mappa {
             this.loadResorts(code);
             const file = `data/resorts_by_country/coordinates/${code}_with_coordinates.csv`;
             d3.csv(file).then(data => {
+                // Scrittura titolo 
                 const label = value === 1 ? "Ski Resort" : "Ski Resorts";
                 this.setTitle(`${feature.properties.NAME} — ${value} ${label}`);
 
@@ -241,15 +260,10 @@ class Mappa {
             }
             d3.select("#vistaStato").style("display", "block");
 
-            /*
-            d3.select("#footer")
-                .style("visibility", "hidden")
-                .style("pointer-events", "none");
-            */
         }
     }
 
-
+    // Carica i resort per un singolo stato e li disegna
     loadResorts(code) {
         this.currentCountryCode = code; // memorizza codice corrente
 
@@ -275,6 +289,7 @@ class Mappa {
                 .attr("stroke", "#fff")
                 .attr("stroke-width", 0.5)
                 .attr("class", d => `resort-circle resort-${sanitizeID(d.Resort)}`)
+                // tooltip per vedere il nome 
                 .on("mouseover", (event, d) => {
                     this.tooltip
                         .style("visibility", "visible")
@@ -310,18 +325,25 @@ class Mappa {
     }
 }
 
+// Rende l’SVG responsivo
 function responsivefy(svg) {
+    // Seleziona il contenitore dell'SVG
     const container = d3.select(svg.node().parentNode),
         width = parseInt(svg.style("width")),
         height = parseInt(svg.style("height")),
+        // Calcola il rapporto larghezza/altezza
         aspect = width / height;
 
+    // Imposta gli attributi viewBox e preserveAspectRatio per lo scaling
     svg.attr("viewBox", `0 0 ${width} ${height}`)
         .attr("preserveAspectRatio", "xMidYMid")
+        // Chiama subito resize per dimensioni iniziali corrette
         .call(resize);
 
+    // Quando la finestra viene ridimensionata, ricalcola le dimensioni SVG
     d3.select(window).on("resize." + container.attr("id"), resize);
 
+    // Funzione di ridimensionamento effettiva
     function resize() {
         const targetWidth = parseInt(container.style("width"));
         svg.attr("width", targetWidth);
@@ -336,7 +358,7 @@ function sanitizeID(str) {
         .replace(/[^a-z0-9\-]/g, ""); // rimuove caratteri speciali
 }
 
-// Evidenzia solo i resort con nome incluso in resortNames
+// Evidenzia solo i resort con nome incluso in resortNames (pallini verdi)
 window.highlightResorts = function(resortNames) {
     d3.selectAll(".resort-circle").attr("fill", "crimson");
     resortNames.forEach(name => {

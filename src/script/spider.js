@@ -5,6 +5,7 @@ const radarWidth = 400;
 const radarHeight = 400;
 const radarRadius = Math.min(radarWidth, radarHeight) / 2 - 40;
 
+// Crea il contenitore per il radar chart dentro #grafico
 const radarContainer = d3.select("#grafico")
     .append("div")
     .attr("id", "spiderContainer")
@@ -20,7 +21,7 @@ radarContainer.append("div")
     .text("Main Avg Features");
 
 
-// Toggle switch personalizzato
+// switch per mostrare/nascondere i valori reali non normalizzati
 const toggleContainer = radarContainer
     .append("div")
     .attr("class", "toggle-container");
@@ -34,7 +35,7 @@ toggleContainer.html(`
 `);
 
 
-// Container SVG
+// Crea l'SVG in cui disegnare il radar chart
 const radarSvg = radarContainer
     .append("svg")
     .attr("id", "spiderArea")
@@ -44,8 +45,11 @@ const radarSvg = radarContainer
     .attr("transform", `translate(${radarWidth / 2}, ${radarHeight / 2})`);
 
 // Variabili globali per dati e scala
+// dati CSV
 let radarData = [];
+// Scale per ciascuna variabile
 let radarScales = {};
+// Nomi delle metriche 
 let axisLabels = [
     "Avg_Total_Slopes",
     "Avg_Total_Lifts",
@@ -54,7 +58,7 @@ let axisLabels = [
     "Avg_Day_Pass_Price"
 ];
 let showRadarTooltip = false;
-let currentCountryCode = null;
+let currentCountryCode = null; // ISO2
 
 // Etichette leggibili per i tooltip/assi
 const readableLabels = {
@@ -80,6 +84,7 @@ d3.csv("data/media_per_country.csv", d3.autoType).then(data => {
     const levels = 5;
     const gridGroup = radarSvg.append("g").attr("class", "radarGrid");
 
+    // crea la griglia circolare con 5 livelli 
     for (let level = 1; level <= levels; level++) {
         const r = (radarRadius / levels) * level;
 
@@ -93,7 +98,7 @@ d3.csv("data/media_per_country.csv", d3.autoType).then(data => {
             .style("stroke-width", 0.5);
 
         // Posiziona la scala normalizzata sull’asse in basso a destra (primo asse) - metto indice 2
-        const labelAngle = (Math.PI * 2 / axisLabels.length) * 2 - Math.PI / 2;  // indice 2 → terzo asse
+        const labelAngle = (Math.PI * 2 / axisLabels.length) * 2 - Math.PI / 2;  // indice 2 --> terzo asse
 
         for (let level = 1; level <= levels; level++) {
             const r = (radarRadius / levels) * level;
@@ -120,6 +125,7 @@ d3.csv("data/media_per_country.csv", d3.autoType).then(data => {
 
     }
 
+    // Creo assi radiali ed etichette 
     const numAxes = axisLabels.length;
     const angleSlice = (Math.PI * 2) / numAxes;
     const axisGroup = radarSvg.append("g").attr("class", "axes");
@@ -129,6 +135,7 @@ d3.csv("data/media_per_country.csv", d3.autoType).then(data => {
         const x = radarRadius * Math.cos(angle);
         const y = radarRadius * Math.sin(angle);
 
+        // linea
         axisGroup.append("line")
             .attr("x1", 0)
             .attr("y1", 0)
@@ -137,6 +144,7 @@ d3.csv("data/media_per_country.csv", d3.autoType).then(data => {
             .attr("stroke", "#aaa")
             .attr("stroke-width", 1);
 
+        // etichetta
         axisGroup.append("text")
             .attr("x", x * 1.15)
             .attr("y", y * 1.17)
@@ -149,10 +157,15 @@ d3.csv("data/media_per_country.csv", d3.autoType).then(data => {
 
 d3.select("#showTooltip").on("change", function () {
     showRadarTooltip = this.checked;
-    radarSvg.selectAll(".axisValue").remove();  
+    radarSvg.selectAll(".axisValue").remove();  // rimuove le etichette veccchie
     // Redisegna se un paese è selezionato
     updateSpider(currentCountryCode);
 });
+
+/**
+ * Funzione principale per aggiornare il radar chart.
+ * @param {string} countryCode - codice ISO2 dello stato selezionato.
+ */
 
 function updateSpider(countryCode) {
 
@@ -160,10 +173,12 @@ function updateSpider(countryCode) {
 
     currentCountryCode = countryCode;
 
+    // pulizia grafico precedente 
     radarSvg.selectAll(".radarArea").remove();
     radarSvg.selectAll(".radarPoint").remove();
     radarSvg.selectAll(".radarTooltip").remove();
 
+    // se nessuno è selezionato, mostra i cerchi a zero
     if (!countryCode) {
         radarSvg.selectAll(".axisValue").remove();
             if (showRadarTooltip) {
@@ -188,13 +203,14 @@ function updateSpider(countryCode) {
         return;
     }
 
-
+    // trova la riga 
     const entry = radarData.find(d => d.country_code === countryCode);
     if (!entry) return;
 
     const numAxes = axisLabels.length;
     const angleSlice = (Math.PI * 2) / numAxes;
 
+    // calcolo dei punti del poligono 
     const points = axisLabels.map((key, i) => {
         const value = entry[key];
         const radius = radarScales[key](value);
@@ -213,6 +229,7 @@ function updateSpider(countryCode) {
         .attr("stroke-width", 2)
         .attr("d", d3.line()(points));
 
+    // Aggiunge dati con tooltip se richiesto 
     if (showRadarTooltip && entry) {
         axisLabels.forEach((key, i) => {
             const value = entry[key];
@@ -246,6 +263,7 @@ function updateSpider(countryCode) {
         });
     }
 
+    // Mostra valori numerici accanto agli assi 
     radarSvg.selectAll(".axisValue").remove();
 
     if(showRadarTooltip && entry) {
