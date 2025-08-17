@@ -192,3 +192,4 @@ function updatePrezzoChart(data) {
     // Mostra tutto
     prezzoContainer.style("display", "block");
 }
+

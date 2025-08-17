@@ -153,3 +153,10 @@ function updateImpiantiChart(data) {
 
     impiantiContainer.style("display", "block");
 }
+
+d3.select("#cella-2-2")
+  .append("p")
+  .attr("class", "grafico-descrizione")
+  .style("margin-top", "10px")
+  .style("text-align", "center")
+  .text("This chart illustrates the estimated frequency of different ski lift types (draglifts, chairlifts, and gondolas), highlighting how common each category is within the country.");

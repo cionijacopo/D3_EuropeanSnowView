@@ -186,3 +186,10 @@ function drawDifficultyScatter(stateCode) {
         d3.select("#pisteContainer").style("display", "block");
     });
 }
+
+d3.select("#cella-2-3")
+  .append("p")
+  .attr("class", "grafico-descrizione")
+  .style("margin-top", "10px")
+  .style("text-align", "center")
+  .text("This scatterplot explores the relationship between the maximum altitude of ski resorts and the average difficulty of their slopes, showing whether higher resorts tend to have harder pistes.");
