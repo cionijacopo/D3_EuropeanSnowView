@@ -1,11 +1,12 @@
-// spider.js
 
-// Dimensioni e margini per il radar chart
+// spider.js — Radar + pannello valori (bordi visibili, colori coerenti con le aree)
+
+// Dimensioni del radar
 const radarWidth = 400;
 const radarHeight = 400;
 const radarRadius = Math.min(radarWidth, radarHeight) / 2 - 40;
 
-// Crea il contenitore per il radar chart dentro #grafico
+// Crea contenitore
 const radarContainer = d3.select("#grafico")
   .append("div")
   .attr("id", "spiderContainer")
@@ -13,14 +14,14 @@ const radarContainer = d3.select("#grafico")
   .style("flex-direction", "column")
   .style("align-items", "center");
 
-// Titolo sopra il grafico
+// Titolo
 radarContainer.append("div")
   .attr("class", "itemTitle")
   .style("text-align", "center")
   .style("margin-bottom", "10px")
   .text("Main Avg Features");
 
-// switch per mostrare/nascondere i valori reali non normalizzati
+// Toggle mostra valori reali (non normalizzati)
 const toggleContainer = radarContainer.append("div").attr("class", "toggle-container");
 toggleContainer.html(
   '<label class="switch">' +
@@ -30,7 +31,7 @@ toggleContainer.html(
   '<span class="toggle-label">Show non-normalized values</span>'
 );
 
-// Crea l'SVG in cui disegnare il radar chart
+// SVG radar
 const radarSvg = radarContainer
   .append("svg")
   .attr("id", "spiderArea")
@@ -39,7 +40,44 @@ const radarSvg = radarContainer
   .append("g")
   .attr("transform", "translate(" + (radarWidth / 2) + ", " + (radarHeight / 2) + ")");
 
-// Variabili globali per dati e scala
+// Pannello valori (tabella)
+const valuesPanel = radarContainer
+  .append("div")
+  .attr("id", "spiderValuesPanel")
+  .style("display", "none")
+  .style("max-width", "600px")
+  .style("width", "96%")
+  .style("margin-top", "16px");
+
+// Stili minimi per la tabella (iniettati una sola volta)
+(function ensurePanelStyles(){
+  if (document.getElementById("spiderValuesStyles")) return;
+  const css = [
+    "#spiderValuesPanel table{width:100%;border-collapse:collapse;font-size:13px;border:1.5px solid #94a3b8;}",
+
+    "#spiderValuesPanel thead th{font-weight:700;text-align:left;padding:8px 10px;border:1.5px solid #94a3b8;}",
+    "#spiderValuesPanel thead th.feature{width:45%;background:#f8fafc;}",
+
+    "#spiderValuesPanel thead th.pinned{background:#e8f1fb;color:#1f4f82;}",
+    "#spiderValuesPanel thead th.hover{background:#fff2e6;color:#8a4500;}",
+
+    "#spiderValuesPanel tbody td{padding:8px 10px;border:1px solid #cbd5e1;}",
+
+    "#spiderValuesPanel tbody tr:nth-child(odd) td{background:#fbfdff;}",
+
+    "#spiderValuesPanel .col-head{display:flex;align-items:center;gap:6px;}",
+    "#spiderValuesPanel .dot{display:inline-block;width:10px;height:10px;border-radius:50%;}",
+    "#spiderValuesPanel .dot-blue{background:steelblue;}",
+    "#spiderValuesPanel .dot-orange{background:#ff7f0e;}",
+    "#spiderValuesPanel .muted{color:#475569;font-weight:600;}"
+  ].join('\\n');
+  const style = document.createElement("style");
+  style.id = "spiderValuesStyles";
+  style.textContent = css;
+  document.head.appendChild(style);
+})();
+
+// Variabili globali
 let radarData = [];
 let radarScales = {};
 let axisLabels = [
@@ -53,7 +91,6 @@ let showRadarTooltip = false;
 let currentCountryCode = null;
 let pinnedCountryCode = null; // ISO2
 
-// Etichette leggibili per i tooltip/assi
 const readableLabels = {
   Avg_Total_Slopes: "N. Slopes",
   Avg_Total_Lifts: "N. Lifts",
@@ -62,21 +99,20 @@ const readableLabels = {
   Avg_Day_Pass_Price: "Day Price"
 };
 
-// Caricamento del CSV con i dati medi per stato
+// Caricamento dati
 d3.csv("data/media_per_country.csv", d3.autoType).then(function(data) {
   radarData = data;
 
-  // Scale normalizzate per ogni variabile
+  // Scale normalizzate
   axisLabels.forEach(function(d) {
     radarScales[d] = d3.scaleLinear()
       .domain([0, d3.max(data, function(r) { return r[d]; })])
       .range([0, radarRadius]);
   });
 
-  // Griglia circolare (5 livelli)
+  // Griglia (5 livelli)
   var levels = 5;
   var gridGroup = radarSvg.append("g").attr("class", "radarGrid");
-
   for (var lvl = 1; lvl <= levels; lvl++) {
     var r = (radarRadius / levels) * lvl;
     gridGroup.append("circle")
@@ -87,7 +123,7 @@ d3.csv("data/media_per_country.csv", d3.autoType).then(function(data) {
       .style("stroke-width", 0.5);
   }
 
-  // Etichette normalizzate (0.2, 0.4, ...) sul terzo asse (indice 2)
+  // Etichette normalizzate (0.2, 0.4, ...) sul terzo asse
   var labelAngle = (Math.PI * 2 / axisLabels.length) * 2 - Math.PI / 2;
   for (var lvl2 = 1; lvl2 <= levels; lvl2++) {
     var rr = (radarRadius / levels) * lvl2;
@@ -101,7 +137,7 @@ d3.csv("data/media_per_country.csv", d3.autoType).then(function(data) {
       .text((rr / radarRadius).toFixed(1));
   }
 
-  // Assi radiali ed etichette
+  // Assi radiali + nomi
   var numAxes = axisLabels.length;
   var angleSlice = (Math.PI * 2) / numAxes;
   var axisGroup = radarSvg.append("g").attr("class", "axes");
@@ -126,18 +162,25 @@ d3.csv("data/media_per_country.csv", d3.autoType).then(function(data) {
   });
 });
 
-// Toggle mostra/nascondi valori non normalizzati
+// Toggle pannello valori
 d3.select("#showTooltip").on("change", function () {
   showRadarTooltip = this.checked;
-  radarSvg.selectAll(".axisValue, .axisValuePinned, .axisValueHover, .axisValueBg").remove();
+  valuesPanel.style("display", (showRadarTooltip ? "block" : "none"));
   updateSpider({ pinned: pinnedCountryCode, hover: currentCountryCode });
 });
 
-/*
- * Funzione principale per aggiornare il radar chart.
- * Accetta:
- *  - stringa/null (legacy): interpretata come hover
- *  - oggetto { pinned, hover }
+// Helpers
+function countryNameFor(code) {
+  if (!code) return "";
+  var rec = radarData.find(function(d){ return d.country_code === code; });
+  if (!rec) return code;
+  return rec.country || rec.country_name || code;
+}
+function fmt(v){ return (v == null ? "" : Number(v).toFixed(2)); }
+
+/**
+ * Aggiorna il radar chart.
+ * input: string/null (hover) oppure { pinned, hover }
  */
 function updateSpider(input) {
   // Normalizza argomenti
@@ -151,11 +194,11 @@ function updateSpider(input) {
   if (typeof pinned !== "undefined") pinnedCountryCode = pinned;
   currentCountryCode = hover;
 
-  // Pulizia disegno (serie, punti, tooltip, etichette)
+  // Pulizia delle serie
   radarSvg.selectAll(
     ".radarArea, .radarAreaPinned, .radarAreaHover," +
     " .radarPoint, .radarPointPinned, .radarPointHover," +
-    " .radarTooltip, .axisValue, .axisValuePinned, .axisValueHover, .axisValueBg"
+    " .radarTooltip"
   ).remove();
 
   function entryFor(code) {
@@ -219,71 +262,49 @@ function updateSpider(input) {
     return entry;
   }
 
-  // Disegno serie pinned + hover
+  // Disegna serie pinned + hover
   var pinnedEntry = drawSeries(pinned, { area: "radarArea radarAreaPinned", point: "radarPoint radarPointPinned" }, "steelblue");
   var hoverEntry  = drawSeries(hover,  { area: "radarArea radarAreaHover",  point: "radarPoint radarPointHover"  }, "#ff7f0e");
 
-  // Helper: testo con “badge” di sfondo per leggibilità
-  function addLabelWithBg(cls, x, y, text, anchor, color) {
-    var g = radarSvg.append("g").attr("class", "axisValueGroup");
-    var t = g.append("text")
-      .attr("class", cls + " axisValue")
-      .attr("x", x).attr("y", y)
-      .attr("text-anchor", anchor || "middle")
-      .attr("font-size", "12px")
-      .style("font-weight", 600)
-      .style("fill", color || "#333")
-      .text(text);
-    try {
-      var bb = t.node().getBBox();
-      g.insert("rect", "text")
-        .attr("class", "axisValueBg")
-        .attr("x", bb.x - 3).attr("y", bb.y - 1)
-        .attr("width", bb.width + 6).attr("height", bb.height + 2)
-        .attr("rx", 3).attr("ry", 3)
-        .attr("fill", "white").attr("opacity", 0.85);
-    } catch(e) {}
+  // Aggiorna pannello valori (sempre visibile se il toggle è attivo)
+  updateValuesPanel(pinnedEntry, hoverEntry);
+}
+
+// Costruisce/aggiorna la tabellina sotto il grafico
+function updateValuesPanel(pinnedEntry, hoverEntry) {
+  if (!showRadarTooltip) {
+    valuesPanel.style("display", "none").html("");
+    return;
   }
+  valuesPanel.style("display", "block");
 
-  // Etichette non normalizzate (solo se toggle attivo)
-  if (showRadarTooltip) {
-    var numAxes2 = axisLabels.length;
-    var angleSlice2 = (Math.PI * 2) / numAxes2;
+  // Header: sempre tre colonne (Feature, Pinned, Hover)
+  var pinnedTitle = pinnedEntry ? (countryNameFor(pinnedEntry.country_code) || "Pinned") : "Pinned";
+  var hoverTitle  = hoverEntry  ? (countryNameFor(hoverEntry.country_code)  || "Hover")  : "Hover";
 
-    // Pinned: raggio 1.22×, testo centrato
-    if (pinnedEntry) {
-      axisLabels.forEach(function(key, i) {
-        var angle = angleSlice2 * i - Math.PI / 2;
-        var rLabel = radarRadius * 1.22;
-        var x = rLabel * Math.cos(angle);
-        var y = rLabel * Math.sin(angle) + 18;
-        var value = pinnedEntry[key] || 0;
-        addLabelWithBg("axisValuePinned", x, y, Number(value).toFixed(2), "middle", "steelblue");
-      });
-    }
-    // Solo hover (nessun pinned): raggio 1.22×, testo centrato
-    else if (hoverEntry) {
-      axisLabels.forEach(function(key, i) {
-        var angle = angleSlice2 * i - Math.PI / 2;
-        var rLabel = radarRadius * 1.22;
-        var x = rLabel * Math.cos(angle);
-        var y = rLabel * Math.sin(angle) + 18;
-        var value = hoverEntry[key] || 0;
-        addLabelWithBg("", x, y, Number(value).toFixed(2), "middle", "#333");
-      });
-    }
+  var html = "";
+  html += '<table class="spider-table">';
+  html +=   '<thead><tr>';
+  html +=     '<th class="feature muted">Feature</th>';
+  html +=     '<th class="pinned"><span class="col-head"><span class="dot dot-blue"></span> ' + pinnedTitle + '</span></th>';
+  html +=     '<th class="hover"><span class="col-head"><span class="dot dot-orange"></span> ' + hoverTitle + '</span></th>';
+  html +=   '</tr></thead>';
+  html +=   '<tbody>';
 
-    // Confronto pinned + hover: hover su raggio 1.36× e ancoraggio dinamico
-    if (pinnedEntry && hoverEntry) {
-      axisLabels.forEach(function(key, i) {
-        var angle = angleSlice2 * i - Math.PI / 2;
-        var rLabel = radarRadius * 1.36;
-        var x = rLabel * Math.cos(angle);
-        var y = rLabel * Math.sin(angle) + 18;
-        var anchor = (Math.cos(angle) >= 0) ? "start" : "end";
-        var value = hoverEntry[key] || 0;
-        addLabelWithBg("axisValueHover", x, y, Number(value).toFixed(2), anchor, "#ff7f0e");
-      });
-    }
-  }
+  axisLabels.forEach(function(key){
+    var label = readableLabels[key] || key;
+    var pVal = pinnedEntry ? fmt(pinnedEntry[key]) : "";
+    var hVal = hoverEntry  ? fmt(hoverEntry[key])  : "";
+    html += '<tr>';
+    html +=   '<td>' + label + '</td>';
+    // inline color to guarantee even if external CSS overrides
+    html +=   '<td class="td-pinned" style="color: steelblue; font-weight: 600;">' + pVal + '</td>';
+    html +=   '<td class="td-hover"  style="color: #ff7f0e; font-weight: 600;">' + hVal + '</td>';
+    html += '</tr>';
+  });
+
+  html +=   '</tbody>';
+  html += '</table>';
+
+  valuesPanel.html(html);
 }
