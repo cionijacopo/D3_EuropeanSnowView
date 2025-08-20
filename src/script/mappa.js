@@ -11,6 +11,11 @@ var mapWidth = mapContainer.node().getBoundingClientRect().width,
 var geoJSONPath = 'data/geojson/europe.geojson';
 var csvPath = 'data/resorts.csv';
 
+// Stato fissato nello spiderplot + timer click/dblclick
+let pinnedCode = null;
+let clickTimer = null;
+
+
 // Classe principale per la mappa
 class Mappa {
     constructor(container) {
@@ -109,6 +114,8 @@ class Mappa {
             })
             .attr('stroke', '#000000')
             .attr('stroke-width', 0.5)
+
+            // ---- HANDLER INTERAZIONI (corretti e bilanciati) ----
             .on('mouseover', (event, d) => {
                 // Evita tutto se siamo in zoom su uno stato
                 const currentZoom = this.zoomGroup.attr('data-zoom');
@@ -119,41 +126,73 @@ class Mappa {
 
                 this.setTitle(d.properties.NAME, value);
 
-                // Colorazione dello stato su cui ho il cursore 
+                // Colorazione temporanea in hover
                 const node = d3.select(event.currentTarget);
                 if (!node.attr('original-fill')) {
                     node.attr('original-fill', node.attr('fill'));
                 }
                 node.attr('fill', 'crimson');
 
-                // Aggiorno lo spiderplot
-                updateSpider(code);
+                // Aggiorno lo spiderplot con hover + eventuale pin
+                if (typeof updateSpider === 'function') {
+                    updateSpider({ pinned: pinnedCode, hover: code });
+                }
             })
             .on('mouseout', (event, d) => {
                 const node = d3.select(event.currentTarget);
-                
-                // Ripristina colore solo se originale-fill è definito
                 const original = node.attr('original-fill');
-                if (original) {
-                    node.attr('fill', original);
-                }
+                if (original) node.attr('fill', original);
 
                 const isZoomed = this.zoomGroup.attr('data-zoom') !== null;
-                if (!isZoomed) {
-                    this.setTitle();
-                }
+                if (!isZoomed) this.setTitle();
 
-                // Svuoto lo spiderplot 
-                updateSpider(null);
+                // Mantieni eventualmente lo stato fissato
+                if (typeof updateSpider === 'function') {
+                    updateSpider({ pinned: pinnedCode, hover: null });
+                }
             })
             .on('click', (event, d) => {
                 const code = d.properties.ISO2;
+                const currentZoom = this.zoomGroup.attr('data-zoom');
                 const value = resortMap.get(code) || 0;
-                // Zoommo solo se lo stato cliccato ha almeno un resort
-                if(value > 0) {
+
+                if (currentZoom) {
+                    // In modalità dettaglio: click singolo → passa ad altro stato
+                    // (o torna alla vista Europa se clicco lo stesso: gestito in handleZoom)
+                    if (value > 0 && typeof this.handleZoom === 'function') {
+                        this.handleZoom(d, value);
+                    }
+                    return;
+                }
+
+                // Vista europea: click singolo → pin/unpin nello spiderplot
+                if (event.detail > 1) return; // gestito dal dblclick
+                clearTimeout(clickTimer);
+                clickTimer = setTimeout(() => {
+                    pinnedCode = (pinnedCode === code) ? null : code;
+                    if (typeof updateSpider === 'function') {
+                        updateSpider({ pinned: pinnedCode, hover: null });
+                    }
+                    // Evidenziazione dello stato fissato (stroke arancione spesso)
+                    this.states.selectAll('path')
+                        .attr('stroke', dd => (dd.properties.ISO2 === pinnedCode) ? '#ff7f0e' : '#000000')
+                        .attr('stroke-width', dd => (dd.properties.ISO2 === pinnedCode) ? 3 : 0.5);
+                }, 220);
+            })
+            .on('dblclick', (event, d) => {
+                // Doppio click → vista dettaglio (zoom) se lo stato ha resort
+                clearTimeout(clickTimer);
+                const code = d.properties.ISO2;
+                const value = resortMap.get(code) || 0;
+                if (value > 0 && typeof this.handleZoom === 'function') {
+                    // Entrando in dettaglio: cancella pin e pulisci evidenziazione
+                    pinnedCode = null;
+                    if (typeof updateSpider === 'function') updateSpider({ pinned: null, hover: null });
+                    this.states.selectAll('path').attr('stroke', '#000000').attr('stroke-width', 0.5);
                     this.handleZoom(d, value);
                 }
             });
+        // ---- FINE HANDLER ----
         
         // Legenda 
         const legend = d3.legendColor()
@@ -218,6 +257,7 @@ class Mappa {
 
             this.resortPoints.selectAll("*").remove();
             this.loadResorts(code);
+
             const file = `data/resorts_by_country/coordinates/${code}_with_coordinates.csv`;
             d3.csv(file).then(data => {
                 // Scrittura titolo 
@@ -230,14 +270,17 @@ class Mappa {
                     d3.select("#featureContainer").style("display", "block");
                 }
 
-                // Disegna grafico altitudine
-                drawAltitudeChart(code);  // già esistente, con slider
-
+                // Disegna grafico altitudine (con slider)
+                if (typeof drawAltitudeChart === "function") {
+                    drawAltitudeChart(code);
+                    d3.select("#altitudeContainer").style("display", "block");
+                }
                 // Disegna scatter difficoltà piste
                 if (typeof drawDifficultyScatter === "function") {
                     drawDifficultyScatter(code);
                     d3.select("#pisteContainer").style("display", "block");
                 }
+
 
                 // Disegna grafico prezzi
                 if (typeof updatePrezzoChart === "function") {
@@ -251,15 +294,16 @@ class Mappa {
                     d3.select("#impiantiContainer").style("display", "block");
                 }
             });
+
             d3.select("#vistaIniziale").style("display", "none");
             d3.select("#mapLegend").style("display", "none");
+
             const mappaContent = document.querySelector("#mappa");
             const nuovaCella = document.querySelector("#cella-1-1");
             if (mappaContent && nuovaCella) {
                 nuovaCella.appendChild(mappaContent);
             }
             d3.select("#vistaStato").style("display", "block");
-
         }
     }
 
@@ -307,8 +351,6 @@ class Mappa {
                 });
         });
     }
-
-
 
     setTitle(name, value = null) {
         const element = d3.select("#mapTitle");
